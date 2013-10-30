@@ -11,7 +11,7 @@
 
 	"use strict";
 
-	app.directive('ellipsis', function() {
+	app.directive('ellipsis', function($timeout, $window) {
 
 		return {
 			restrict	: 'A',
@@ -22,6 +22,11 @@
 			compile : function(elem, attr, linker) {
 
 				return function(scope, element, attributes) {
+					attributes.lastWindowResizeTime = 0;
+					attributes.lastWindowResizeWidth = 0;
+					attributes.lastWindowResizeHeight = 0;
+					attributes.lastWindowTimeoutEvent = null;
+
 
 					function buildEllipsis() {
 						if (typeof(scope.ngBind) !== 'undefined') {
@@ -82,6 +87,23 @@
 						scope.$watch('ellipsisAppend', function () {
 							buildEllipsis();
 						});
+
+					   /**
+						*	When window width or height changes - re-init truncation
+						*/
+						angular.element($window).bind('resize', function () {
+							$timeout.cancel(attributes.lastWindowTimeoutEvent);
+
+							attributes.lastWindowTimeoutEvent = $timeout(function() {
+								if (attributes.lastWindowResizeWidth != window.innerWidth || attributes.lastWindowResizeHeight != window.innerHeight) {
+									buildEllipsis();
+								}
+
+								attributes.lastWindowResizeWidth = window.innerWidth;
+								attributes.lastWindowResizeHeight = window.innerHeight;
+							}, 150);
+						});
+
 
 				};
 			}
