@@ -6,7 +6,7 @@ Angular directive to truncate multi-line text to visible height.  The end of the
 Example
 --------
 ``<p data-ng-bind="paragraphText" data-ellipsis style="height: 20px;"></p>``   
-*CSS style shown **inline** for example only*
+*CSS style shown inline for example only*
 
 Getting Started
 --------
@@ -17,7 +17,8 @@ Getting Started
 
 Options and Parameters
 --------
-* **Add Custom Append** You can include a custom string after the ellipsis by adding the **ellipsis-append**/**data-ellipsis-append** attribute to the element, and setting its value to the custom string.  For example:   
+* **Add Custom Append**   
+You can include a custom string after the ellipsis by adding the *ellipsis-append**/**data-ellipsis-append* attribute to the element, and setting its value to the custom string.  For example:   
 ``<p data-ng-bind="paragraphText" data-ellipsis data-ellipsis-append="read more"></p>``
 
 Features
