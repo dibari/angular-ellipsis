@@ -60,6 +60,9 @@ module.exports = function(grunt) {
 
 		// JS Hint
 		jshint: {
+			options : {
+				"smarttabs": true
+			},
 			all : [
 				'src/angular-ellipsis.js'
 			]
