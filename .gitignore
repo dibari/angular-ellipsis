@@ -1,0 +1,8 @@
+# Directories
+bower_components/
+node_modules/
+
+# Files
+examples/app.js
+.DS_Store
+server.js
