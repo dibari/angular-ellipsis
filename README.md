@@ -18,7 +18,7 @@ Getting Started
 Options and Parameters
 --------
 * **Add Custom Append**   
-You can include a custom string after the ellipsis by adding the *ellipsis-append**/**data-ellipsis-append* attribute to the element, and setting its value to the custom string.  For example:   
+You can include a custom string after the ellipsis by adding the *ellipsis-append*/*data-ellipsis-append* attribute to the element, and setting its value to the custom string.  For example:   
 ``<p data-ng-bind="paragraphText" data-ellipsis data-ellipsis-append="read more"></p>``
 
 Features
