@@ -8,11 +8,13 @@
 	<style type="text/css">
 		html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td,article,aside,canvas,details,embed,figure,figcaption,footer,header,hgroup,menu,nav,output,ruby,section,summary,time,mark,audio,video{border:0;font-size:100%;font:inherit;vertical-align:baseline;margin:0;padding:0}article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section{display:block}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:none}table{border-collapse:collapse;border-spacing:0}
 
-		html {background-color: #eee;}
-		body {background-color: #fff; max-width: 600px; margin: 0 auto;}
+		html {font-size: 1em; background-color: #fff;}
+		body {max-width: 1000px; margin: 0 auto; background-color: #f8f8f8; padding: 10px;}
 
-		h1 {font-size: 2em; font-weight: bold; margin: 10px 0; text-align: center;}
-		p {margin: 10px; max-width: 500px; height: 35px; margin: 0 auto;}
+		h3 {font-size: 1.25em; font-weight: bold;}
+		h5 {font-size: 1.2em; width: 98%; padding: 3px 1%; background-color: #000; color: #fff; margin: 20px 0 15px;}
+		p {font-size: 1em; margin: 10px 10px 0; max-width: 96%; height: 75px; margin: 0 auto;}
+		code {font-size: 1.2em; background-color: #eee; display: block; padding: 0 1%; width: 85%; display: block; margin: 10px auto;}
 	</style>
 
 	<script src="js/angular.js"></script>
@@ -26,7 +28,7 @@
 			"use strict";
 
 			app.controller("EllipsisController", function($scope) {
-				$scope.paragraphText = "Two little mice fell in a bucket of cream. The first mouse quickly gave up and drowned. The second mouse, wouldn’t quit. He struggled so hard that eventually he churned that cream into butter and crawled out. Gentlemen, as of this moment, I am that second mouse.";
+				$scope.paragraphText = "Four score and seven years ago our fathers brought forth on this continent, a new nation, conceived in Liberty, and dedicated to the proposition that all men are created equal.  Now we are engaged in a great civil war, testing whether that nation, or any nation so conceived and so dedicated, can long endure. We are met on a great battle-field of that war. We have come to dedicate a portion of that field, as a final resting place for those who here gave their lives that that nation might live. It is altogether fitting and proper that we should do this.  But, in a larger sense, we can not dedicate, we can not consecrate, we can not hallow, this ground. The brave men, living and dead, who struggled here, have consecrated it, far above our poor power to add or detract. The world will little note, nor long remember what we say here, but it can never forget what they did here. It is for us the living, rather, to be dedicated here to the unfinished work which they who fought here have thus far so nobly advanced. It is rather for us to be here dedicated to the great task remaining before us, that from these honored dead we take increased devotion to that cause for which they gave the last full measure of devotion, that we here highly resolve that these dead shall not have died in vain, that this nation, under God, shall have a new birth of freedom, and that government of the people, by the people, for the people, shall not perish from the earth.";
 			});
 
 		})(angular, exampleApp);
@@ -34,9 +36,23 @@
 
 </head>
 <body data-ng-app="ellipsisApp" data-ng-controller="EllipsisController">
-	<h1>Angular Directive Examples</h1>
+	<h3>Change the window width, and see angular-ellipsis re-truncate the text</h3>
 
+	<h5>Basic Usage</h5>
+	<p data-ng-bind="paragraphText" data-ellipsis></p>
+	<code>&lt;p data-ng-bind="paragraphText" data-ellipsis&gt;&lt;/p&gt;</code>
+
+	<h5>Custom Append Text after Ellipsis</h5>
 	<p data-ng-bind="paragraphText" data-ellipsis data-ellipsis-append="read more"></p>
+	<code>&lt;p data-ng-bind="paragraphText" data-ellipsis data-ellipsis-append="read more"&gt;&lt;/p&gt;</code>
+
+	<h5>Custom Ellipsis Symbol/String (No Appended Text)</h5>
+	<p data-ng-bind="paragraphText" data-ellipsis data-ellipsis-symbol="--"></p>
+	<code>&lt;p data-ng-bind="paragraphText" data-ellipsis data-ellipsis-symbol="--"&gt;&lt;/p&gt;</code>
+
+	<h5>Custom Ellipsis Symbol/String (With Appended Text)</h5>
+	<p data-ng-bind="paragraphText" data-ellipsis data-ellipsis-symbol="--" data-ellipsis-append="read more"></p>
+	<code>&lt;p data-ng-bind="paragraphText" data-ellipsis data-ellipsis-symbol="--" data-ellipsis-append="read more"&gt;&lt;/p&gt;</code>
 
 </body>
 </html>

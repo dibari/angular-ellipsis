@@ -16,8 +16,9 @@
 		return {
 			restrict	: 'A',
 			scope		: {
-				ngBind			: '=',
-				ellipsisAppend	: '@'
+				ngBind				: '=',
+				ellipsisAppend		: '@',
+				ellipsisSymbol		: '@'
 			},
 			compile : function(elem, attr, linker) {
 
@@ -26,35 +27,44 @@
 					attributes.lastWindowResizeWidth = 0;
 					attributes.lastWindowResizeHeight = 0;
 					attributes.lastWindowTimeoutEvent = null;
-
+					attributes.isTruncated = false;
 
 					function buildEllipsis() {
 						if (typeof(scope.ngBind) !== 'undefined') {
 							var bindArray = scope.ngBind.split(" "),
-								elementStyles = window.getComputedStyle(element[0], null),
 								incrementalString = '',
 								i = 0,
-								appendString = (typeof(scope.ellipsisAppend) !== 'undefined' && scope.ellipsisAppend !== '') ? scope.ellipsisAppend : '',
-								appendCharCount = ('&hellip;' + appendString).length;
+								ellipsisSymbol = (typeof(attributes.ellipsisSymbol) !== 'undefined') ? attributes.ellipsisSymbol : '&hellip;',
+								appendString = (typeof(scope.ellipsisAppend) !== 'undefined' && scope.ellipsisAppend !== '') ? ellipsisSymbol + scope.ellipsisAppend : ellipsisSymbol,
+								appendCharCount = (appendString).length;
+
+							attributes.isTruncated = false;
 
 							// Go one word at a time, when word is found to cause overflow, move back one
 							for ( ; i < bindArray.length; i++) {
 								var prevIncrementalString = incrementalString;
 
 								// Add and test the next word (at space)
-								incrementalString = incrementalString + bindArray[i] + ' ' + '&hellip;' + appendString;
+								incrementalString = incrementalString + bindArray[i] + ' ' + appendString;
 								element.html(incrementalString);
 
 								// If this word caused overflow, use previous string and append append
 								if (i > 0 && isOverflowed(element)) {
-									element.html(prevIncrementalString.slice(0, -1) + '&hellip;' + appendString);
+									element.html(prevIncrementalString.slice(0, -1) + appendString);
+									attributes.isTruncated = true;
 									break;
 								}
 								// Else, remove append off end and try again
-								else {
+								else
 									incrementalString = incrementalString.slice(0, '-' + appendCharCount);
-								}
 							}
+
+							// If text did not need be to truncated, remove appended string
+							if (attributes.isTruncated === false) {
+								var currentString = element.html();
+								element.html(currentString.slice(0, '-' + appendCharCount));
+							}
+
 						}
 					}
 
