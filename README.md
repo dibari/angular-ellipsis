@@ -1,7 +1,7 @@
 angular-ellipsis
 ================
 
-Angular directive to truncate multi-line text to visible height.  The end of the visible text will be appended with an ellipsis, and optional text.   
+Angular directive to truncate multi-line text to visible height.  The end of the visible text is appended with an ellipsis and optional text.   
    
 To use, copy *angular-ellipsis* to your project and rename the included module (which is set to 'exampleApp' at the bottom) to your own module.
 
@@ -22,9 +22,6 @@ USAGE
 
 ### Simple example
 ``<p data-ng-bind="paragraphText" data-ellipsis></p>``   
-
-### Use custom append text
-``<p data-ng-bind="paragraphText" data-ellipsis data-ellipsis-append="read more"></p>``   
 
 OPTIONS
 --------
