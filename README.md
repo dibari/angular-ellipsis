@@ -26,9 +26,13 @@ USAGE
 OPTIONS
 --------
 * **Add Custom Append**   
-You can include a custom string after the ellipsis by adding the *ellipsis-append*/*data-ellipsis-append* attribute to the element, and setting its value to the custom string.  This value may be bound to a scope instead of just being a static string.  The direcive will update the appended text on its update.  Examples:
+You can include a custom string after the ellipsis by adding the *ellipsis-append*/*data-ellipsis-append* attribute to the element, and setting its value to the custom string.  This value may be bound to a scope instead of just being a static string.  The direcive will update the appended text on its update.  Examples:   
 ``<p data-ng-bind="paragraphText" data-ellipsis data-ellipsis-append="read more"></p>``   
-``<p data-ng-bind="paragraphText" data-ellipsis data-ellipsis-append="scope.appendString"></p>``
+``<p data-ng-bind="paragraphText" data-ellipsis data-ellipsis-append="scope.appendString"></p>``   
+Custom append can include HTML, and be composed partially or wholly of angular variables.  Examples:   
+``<p data-ng-bind="paragraphText" data-ellipsis data-ellipsis-append="<span>read more</span>"></p>``   
+``<p data-ng-bind="paragraphText" data-ellipsis data-ellipsis-append='<a href="http://www.google.com">scope.appendString</a>'></p>``   
+``<p data-ng-bind="paragraphText" data-ellipsis data-ellipsis-append='<a href="{{scopeVarLink}}">scope.appendString</a>'></p>``   
 
 * **Add Ellipsis Symbol**   
 A custom ellipsis symbol or string can be used.  This value will be appended at the end of the truncated text, before a custom append (if included).  If this value is set, it will replace the ellipsis (...).  Example:
@@ -37,6 +41,5 @@ A custom ellipsis symbol or string can be used.  This value will be appended at 
 
 TODO's
 --------
-* Allow appended text to be wrapped in element (for styling)
 * Add option to execute passed function on append click
 * Basic option to use a show more/show less functionality for append

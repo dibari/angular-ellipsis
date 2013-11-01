@@ -13,7 +13,9 @@
 
 		h3 {font-size: 1.25em; font-weight: bold;}
 		h5 {font-size: 1.2em; width: 98%; padding: 3px 1%; background-color: #000; color: #fff; margin: 20px 0 15px;}
-		p {font-size: 1em; margin: 10px 10px 0; max-width: 96%; height: 75px; margin: 0 auto;}
+		p {font-size: 1em; margin: 10px 10px 0; max-width: 96%; height: 75px; margin: 0 auto; overflow: hidden;}
+		p span {color: red; font-weight: bold;}
+		p a {color: blue; text-decoration: underline;}
 		code {font-size: 1.2em; background-color: #eee; display: block; padding: 0 1%; width: 85%; display: block; margin: 10px auto;}
 	</style>
 
@@ -28,7 +30,10 @@
 			"use strict";
 
 			app.controller("EllipsisController", function($scope) {
-				$scope.paragraphText = "Four score and seven years ago our fathers brought forth on this continent, a new nation, conceived in Liberty, and dedicated to the proposition that all men are created equal.  Now we are engaged in a great civil war, testing whether that nation, or any nation so conceived and so dedicated, can long endure. We are met on a great battle-field of that war. We have come to dedicate a portion of that field, as a final resting place for those who here gave their lives that that nation might live. It is altogether fitting and proper that we should do this.  But, in a larger sense, we can not dedicate, we can not consecrate, we can not hallow, this ground. The brave men, living and dead, who struggled here, have consecrated it, far above our poor power to add or detract. The world will little note, nor long remember what we say here, but it can never forget what they did here. It is for us the living, rather, to be dedicated here to the unfinished work which they who fought here have thus far so nobly advanced. It is rather for us to be here dedicated to the great task remaining before us, that from these honored dead we take increased devotion to that cause for which they gave the last full measure of devotion, that we here highly resolve that these dead shall not have died in vain, that this nation, under God, shall have a new birth of freedom, and that government of the people, by the people, for the people, shall not perish from the earth.";
+				$scope.paragraphText = "Four score and seven years ago our fathers brought forth on this continent, a new nation, conceived in Liberty, and dedicated to the proposition that all men are created equal.  Now we are engaged in a great civil war, testing whether that nation, or any nation so conceived and so dedicated, can long endure. We are met on a great battle-field of that war. We have come to dedicate a portion of that field, as a final resting place for those who here gave their lives that that nation might live. It is altogether fitting and proper that we should do this.  But, in a larger sense, we can not dedicate, we can not consecrate, we can not hallow, this ground. The brave men, living and dead, who struggled here, have consecrated it, far above our poor power to add or detract. The world will little note, nor long remember what we say here, but it can never forget what they did here. It is for us the living, rather, to be dedicated here to the unfinished work which they who fought here have thus far so nobly advanced.";
+
+				$scope.ellipsisText = "But wait, there's more";
+				$scope.linkAddress = "http://www.google.com";
 			});
 
 		})(angular, exampleApp);
@@ -36,7 +41,9 @@
 
 </head>
 <body data-ng-app="ellipsisApp" data-ng-controller="EllipsisController">
-	<h3>Change the window width, and see angular-ellipsis re-truncate the text</h3>
+	<h3>Angular scope data used in examples</h3>
+
+	<code>$scope.paragraphText = "Four score and seven years ago our fathers brought forth on this continent, a new nation, conceived in Liberty, and dedicated to the proposition that all men are created equal.  Now we are engaged in a great civil war, testing whether that nation, or any nation so conceived and so dedicated, can long endure. We are met on a great battle-field of that war. We have come to dedicate a portion of that field, as a final resting place for those who here gave their lives that that nation might live. It is altogether fitting and proper that we should do this.  But, in a larger sense, we can not dedicate, we can not consecrate, we can not hallow, this ground. The brave men, living and dead, who struggled here, have consecrated it, far above our poor power to add or detract. The world will little note, nor long remember what we say here, but it can never forget what they did here. It is for us the living, rather, to be dedicated here to the unfinished work which they who fought here have thus far so nobly advanced.";<br><br>$scope.ellipsisText = "But wait, there's more";<br><br>$scope.linkAddress = "http://www.google.com";</code>
 
 	<h5>Basic Usage</h5>
 	<p data-ng-bind="paragraphText" data-ellipsis></p>
@@ -45,6 +52,22 @@
 	<h5>Custom Append Text after Ellipsis</h5>
 	<p data-ng-bind="paragraphText" data-ellipsis data-ellipsis-append="read more"></p>
 	<code>&lt;p data-ng-bind="paragraphText" data-ellipsis data-ellipsis-append="read more"&gt;&lt;/p&gt;</code>
+
+	<h5>Custom Append Scope Variable after Ellipsis</h5>
+	<p data-ng-bind="paragraphText" data-ellipsis data-ellipsis-append="{{ellipsisText}}"></p>
+	<code>&lt;p data-ng-bind="paragraphText" data-ellipsis data-ellipsis-append="&#123;&#123;<span>ellipsisText</span>&#125;&#125;"&gt;&lt;/p&gt;</code>
+
+	<h5>Custom Append HTML (span) after Ellipsis</h5>
+	<p data-ng-bind="paragraphText" data-ellipsis data-ellipsis-append="<span>read more</span>"></p>
+	<code>&lt;p data-ng-bind="paragraphText" data-ellipsis data-ellipsis-append="&lt;span&gt;read more&lt;span&gt;"&lt;&gt;/p&lt;</code>
+
+	<h5>Custom Append HTML (link) after Ellipsis</h5>
+	<p data-ng-bind="paragraphText" data-ellipsis data-ellipsis-append='<a href="http://www.google.com">read more</a>'></p>
+	<code>&lt;p data-ng-bind="paragraphText" data-ellipsis data-ellipsis-append='&lt;a href="http://www.google.com"&gt;read more&lt;a&gt;'&gt;&lt;/p&gt;</code>
+
+	<h5>Custom Append HTML (link) from Scope Variable after Ellipsis</h5>
+	<p data-ng-bind="paragraphText" data-ellipsis data-ellipsis-append='<a href="{{linkAddress}}">read more</a>'></p>
+	<code>&lt;p data-ng-bind="paragraphText" data-ellipsis data-ellipsis-append='&lt;a href="{{<span>linkAddress</span>}}"&gt;read more&lt;a&gt;'&gt;&lt;/p&gt;</code>
 
 	<h5>Custom Ellipsis Symbol/String (No Appended Text)</h5>
 	<p data-ng-bind="paragraphText" data-ellipsis data-ellipsis-symbol="--"></p>
