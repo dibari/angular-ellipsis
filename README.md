@@ -13,7 +13,7 @@ FEATURES
 
 USAGE
 --------
-1. Select an HTML element that has CSS height value set
+1. Select an HTML element that has a CSS height or max-height value set (max-height will take precedence)
 2. Use *ng-bind* on the element to include text to truncate
 3. Add the *ellipsis*/*data-ellipsis* directive to the element
 4. Text will be truncated to visible area and an ellipsis (...) will be added to the end
@@ -37,7 +37,6 @@ A custom ellipsis symbol or string can be used.  This value will be appended at 
 
 TODO's
 --------
-* Make directive work with max-height in addition to height
 * Allow appended text to be wrapped in element (for styling)
 * Add option to execute passed function on append click
 * Basic option to use a show more/show less functionality for append

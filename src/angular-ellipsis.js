@@ -23,48 +23,42 @@
 			compile : function(elem, attr, linker) {
 
 				return function(scope, element, attributes) {
-					attributes.lastWindowResizeTime = 0;
-					attributes.lastWindowResizeWidth = 0;
-					attributes.lastWindowResizeHeight = 0;
-					attributes.lastWindowTimeoutEvent = null;
-					attributes.isTruncated = false;
+					/* Window Resize Variables */
+						attributes.lastWindowResizeTime = 0;
+						attributes.lastWindowResizeWidth = 0;
+						attributes.lastWindowResizeHeight = 0;
+						attributes.lastWindowTimeoutEvent = null;
+					/* State Variables */
+						attributes.isTruncated = false;
 
 					function buildEllipsis() {
 						if (typeof(scope.ngBind) !== 'undefined') {
 							var bindArray = scope.ngBind.split(" "),
-								incrementalString = '',
 								i = 0,
 								ellipsisSymbol = (typeof(attributes.ellipsisSymbol) !== 'undefined') ? attributes.ellipsisSymbol : '&hellip;',
-								appendString = (typeof(scope.ellipsisAppend) !== 'undefined' && scope.ellipsisAppend !== '') ? ellipsisSymbol + scope.ellipsisAppend : ellipsisSymbol,
-								appendCharCount = (appendString).length;
+								appendString = (typeof(scope.ellipsisAppend) !== 'undefined' && scope.ellipsisAppend !== '') ? ellipsisSymbol + scope.ellipsisAppend : ellipsisSymbol;
 
 							attributes.isTruncated = false;
+							element.html(scope.ngBind);
 
-							// Go one word at a time, when word is found to cause overflow, move back one
-							for ( ; i < bindArray.length; i++) {
-								var prevIncrementalString = incrementalString;
+							// If text has overflow
+							if (isOverflowed(element)) {
+								var bindArrayStartingLength = bindArray.length,
+									initialMaxHeight = element[0].clientHeight;
 
-								// Add and test the next word (at space)
-								incrementalString = incrementalString + bindArray[i] + ' ' + appendString;
-								element.html(incrementalString);
+								element.html(scope.ngBind + appendString);
 
-								// If this word caused overflow, use previous string and append append
-								if (i > 0 && isOverflowed(element)) {
-									element.html(prevIncrementalString.slice(0, -1) + appendString);
-									attributes.isTruncated = true;
-									break;
+								// Set complete text and remove one word at a time, until there is no overflow
+								for ( ; i < bindArrayStartingLength; i++) {
+									bindArray.pop();
+									element.html(bindArray.join(" ") + appendString);
+
+									if (element[0].scrollHeight < initialMaxHeight || isOverflowed(element) === false) {
+										attributes.isTruncated = true;
+										break;
+									}
 								}
-								// Else, remove append off end and try again
-								else
-									incrementalString = incrementalString.slice(0, '-' + appendCharCount);
 							}
-
-							// If text did not need be to truncated, remove appended string
-							if (attributes.isTruncated === false) {
-								var currentString = element.html();
-								element.html(currentString.slice(0, '-' + appendCharCount));
-							}
-
 						}
 					}
 
@@ -111,7 +105,7 @@
 
 								attributes.lastWindowResizeWidth = window.innerWidth;
 								attributes.lastWindowResizeHeight = window.innerHeight;
-							}, 150);
+							}, 75);
 						});
 
 
