@@ -8,6 +8,7 @@ To use, copy *angular-ellipsis* to your project and rename the included module (
 FEATURES
 --------
 * Works with multi-line text (no HTML)
+* Text content and custom append will both live-update (if a $scope variable is used)
 * On any window resize, truncation and ellipsis will be recalcuated
 * Text will only be truncated if there is overflow, otherwise it will display as normal
 
