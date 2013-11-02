@@ -5,6 +5,11 @@ Angular directive to truncate multi-line text to visible height.  The end of the
    
 To use, copy *angular-ellipsis* to your project and rename the included module (which is set to 'exampleApp' at the bottom) to your own module.
 
+DEMO
+--------
+[Angular Ellipsis Directive demo page](http://dibari.github.io/angular-ellipsis.html "Angular Ellipsis Directive")
+
+
 FEATURES
 --------
 * Works with multi-line text (no HTML)
