@@ -17,6 +17,10 @@ FEATURES
 * On any window resize, truncation and ellipsis will be recalcuated
 * Text will only be truncated if there is overflow, otherwise it will display as normal
 
+COMPATIBILITY
+--------
+Works on modern web browers, which includes any relatively recent version of Chrome, Firefox, Safari, and IE 9+.  Although there is no formally-maintained list, mobile device support is quite thorough.  I will update cross-browser and device issues if they are entered as issues.
+
 USAGE
 --------
 1. Select an HTML element that has a CSS height or max-height value set (max-height will take precedence)
