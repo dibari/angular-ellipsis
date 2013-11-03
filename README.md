@@ -20,6 +20,7 @@ FEATURES
 COMPATIBILITY
 --------
 Works on modern web browers, which includes any relatively recent version of Chrome, Firefox, Safari, and IE 9+.  Although there is no formally-maintained list, mobile device support is quite thorough.  I will update cross-browser and device issues if they are entered as issues.
+* To make the plugin work in non-modern versions of Internet Explorer, be sure to review the [Angular Internet Explorer Compatibility page](http://docs.angularjs.org/guide/ie).  This [StackOverflow question](http://stackoverflow.com/questions/18506458/sceiequirks-strict-contextual-escaping-does-not-support-internet-explorer-ve) regarding the [Angular $sce service](http://docs.angularjs.org/api/ng.$sce) addresses an issue with the ng-bind directive.
 
 USAGE
 --------
