@@ -1,6 +1,6 @@
 {
 	"name": "angular-ellipsis",
-	"version": "0.0.1",
+	"version": "0.1.0",
 	"description" : "Angular directive to truncate multi-line text",
 	"authors" : [
 		"Eric Di Bari"

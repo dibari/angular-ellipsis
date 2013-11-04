@@ -2,8 +2,14 @@
  *	Angular directive to truncate multi-line text to visible height
  *
  *	@param bind (angular bound value to append) REQUIRED
+ *	@param ellipsisAppend (string) string to append at end of truncated text after ellipsis, can be HTML OPTIONAL
+ *	@param ellipsisSymbol (string) string to use as ellipsis, replaces default '...' OPTIONAL
+ *	@param ellipsisAppendClick (function) function to call if ellipsisAppend is clicked (ellipsisAppend must be clicked) OPTIONAL
  *
  *	@example <p data-ellipsis data-ng-bind="boundData"></p>
+ *	@example <p data-ellipsis data-ng-bind="boundData" data-ellipsis-symbol="---"></p>
+ *	@example <p data-ellipsis data-ng-bind="boundData" data-ellipsis-append="read more"></p>
+ *	@example <p data-ellipsis data-ng-bind="boundData" data-ellipsis-append="read more" data-ellipsis-append-click="displayFull()"></p>
  *
  */
 
@@ -18,6 +24,7 @@
 			scope		: {
 				ngBind				: '=',
 				ellipsisAppend		: '@',
+				ellipsisAppendClick	: '&',
 				ellipsisSymbol		: '@'
 			},
 			compile : function(elem, attr, linker) {
@@ -36,7 +43,7 @@
 							var bindArray = scope.ngBind.split(" "),
 								i = 0,
 								ellipsisSymbol = (typeof(attributes.ellipsisSymbol) !== 'undefined') ? attributes.ellipsisSymbol : '&hellip;',
-								appendString = (typeof(scope.ellipsisAppend) !== 'undefined' && scope.ellipsisAppend !== '') ? ellipsisSymbol + scope.ellipsisAppend : ellipsisSymbol;
+								appendString = (typeof(scope.ellipsisAppend) !== 'undefined' && scope.ellipsisAppend !== '') ? ellipsisSymbol + '<span>' + scope.ellipsisAppend + '</span>' : ellipsisSymbol;
 
 							attributes.isTruncated = false;
 							element.html(scope.ngBind);
@@ -57,6 +64,13 @@
 										attributes.isTruncated = true;
 										break;
 									}
+								}
+
+								// If append string was passed and append click function included
+								if (ellipsisSymbol != appendString && typeof(scope.ellipsisAppendClick) !== 'undefined' && scope.ellipsisAppendClick !== '' ) {
+									element.find('span').bind("click", function (e) {
+										scope.$apply(scope.ellipsisAppendClick);
+									});
 								}
 							}
 						}

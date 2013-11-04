@@ -41,9 +41,13 @@
 				$scope.linkAddress = "http://www.google.com";
 
 				$interval(function() {
-					$scope.incrementing = "Read x" + i;
+					$scope.incrementing = "But wait, there's more x" + i;
 					i++;
 				}, 1000);
+
+				$scope.showFullText = function() {
+					alert('On click function');
+				};
 			});
 
 		})(angular, exampleApp);
@@ -51,7 +55,7 @@
 
 </head>
 <body id="ng-app" data-ng-app="ellipsisApp" data-ng-controller="EllipsisController">
-	<h3 class="link toggleNext">Angular scope data used in examples</h3>
+	<h3 class="link toggleNext">Angular controller used in examples</h3>
 
 	<code style="display: none;">
 		var i = 0;<br><br>
@@ -59,47 +63,41 @@
 		$scope.ellipsisText = "But wait, there's more";<br><br>
 		$scope.linkAddress = "http://www.google.com";<br><br>
 		$interval(function() {<br>
-		&nbsp;&nbsp;&nbsp;&nbsp;$scope.incrementing = "Read x" + i;<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;$scope.incrementing = "But wait, there's more x" + i;<br>
 		&nbsp;&nbsp;&nbsp;&nbsp;i++;<br>
-		}, 1000);
+		}, 1000);<br><br>
+		$scope.showFullText = function() {<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;alert('On click function');<br>
+		};<br>
 	</code>
 
 	<h5>Basic Usage</h5>
 	<p data-ng-bind="paragraphText" data-ellipsis></p>
 	<code>&lt;p data-ng-bind="paragraphText" data-ellipsis&gt;&lt;/p&gt;</code>
 
-	<h5>Custom Append Text after Ellipsis</h5>
-	<p data-ng-bind="paragraphText" data-ellipsis data-ellipsis-append="read more"></p>
-	<code>&lt;p data-ng-bind="paragraphText" data-ellipsis data-ellipsis-append="read more"&gt;&lt;/p&gt;</code>
-
-	<h5>Custom Append Scope Variable after Ellipsis</h5>
-	<p data-ng-bind="paragraphText" data-ellipsis data-ellipsis-append="{{ellipsisText}}"></p>
-	<code>&lt;p data-ng-bind="paragraphText" data-ellipsis data-ellipsis-append="&#123;&#123;<span>ellipsisText</span>&#125;&#125;"&gt;&lt;/p&gt;</code>
-
-	<h5>Custom Append Scope Updating Variable after Ellipsis</h5>
-	<p data-ng-bind="paragraphText" data-ellipsis data-ellipsis-append="{{incrementing}}"></p>
-	<code>&lt;p data-ng-bind="paragraphText" data-ellipsis data-ellipsis-append="&#123;&#123;<span>incrementing</span>&#125;&#125;"&gt;&lt;/p&gt;</code>
-
-	<h5>Custom Append HTML (span) after Ellipsis</h5>
-	<p data-ng-bind="paragraphText" data-ellipsis data-ellipsis-append="<span>read more</span>"></p>
-	<code>&lt;p data-ng-bind="paragraphText" data-ellipsis data-ellipsis-append="&lt;span&gt;read more&lt;span&gt;"&gt;&lt;/p&gt;</code>
-
-	<h5>Custom Append HTML (link) after Ellipsis</h5>
-	<p data-ng-bind="paragraphText" data-ellipsis data-ellipsis-append='<a href="http://www.google.com">read more</a>'></p>
-	<code>&lt;p data-ng-bind="paragraphText" data-ellipsis data-ellipsis-append='&lt;a href="http://www.google.com"&gt;read more&lt;a&gt;'&gt;&lt;/p&gt;</code>
-
-	<h5>Custom Append HTML (link) from Scope Variable after Ellipsis</h5>
-	<p data-ng-bind="paragraphText" data-ellipsis data-ellipsis-append='<a href="{{linkAddress}}">read more</a>'></p>
-	<code>&lt;p data-ng-bind="paragraphText" data-ellipsis data-ellipsis-append='&lt;a href="{{<span>linkAddress</span>}}"&gt;read more&lt;a&gt;'&gt;&lt;/p&gt;</code>
-
-	<h5>Custom Ellipsis Symbol/String (No Appended Text)</h5>
+	<h5>Custom Ellipsis Symbol/String</h5>
 	<p data-ng-bind="paragraphText" data-ellipsis data-ellipsis-symbol="--"></p>
 	<code>&lt;p data-ng-bind="paragraphText" data-ellipsis data-ellipsis-symbol="--"&gt;&lt;/p&gt;</code>
 
-	<h5>Custom Ellipsis Symbol/String (With Appended Text)</h5>
-	<p data-ng-bind="paragraphText" data-ellipsis data-ellipsis-symbol="--" data-ellipsis-append="read more"></p>
-	<code>&lt;p data-ng-bind="paragraphText" data-ellipsis data-ellipsis-symbol="--" data-ellipsis-append="read more"&gt;&lt;/p&gt;</code>
+	<h5>Custom Append Text</h5>
+	<p data-ng-bind="paragraphText" data-ellipsis data-ellipsis-append="read more"></p>
+	<code>&lt;p data-ng-bind="paragraphText" data-ellipsis data-ellipsis-append="read more"&gt;&lt;/p&gt;</code>
 
+	<h5>Custom Ellipsis Symbol/String and Append Text</h5>
+	<p data-ng-bind="paragraphText" data-ellipsis data-ellipsis-symbol="---" data-ellipsis-append="read more"></p>
+	<code>&lt;p data-ng-bind="paragraphText" data-ellipsis data-ellipsis-symbol="---" data-ellipsis-append="read more"&gt;&lt;/p&gt;</code>
+
+	<h5>Custom Append Text using Scope Variable</h5>
+	<p data-ng-bind="paragraphText" data-ellipsis data-ellipsis-append="{{ellipsisText}}"></p>
+	<code>&lt;p data-ng-bind="paragraphText" data-ellipsis data-ellipsis-append="&#123;&#123;<span>ellipsisText</span>&#125;&#125;"&gt;&lt;/p&gt;</code>
+
+	<h5>Custom Append Text using Updating Scope Variable</h5>
+	<p data-ng-bind="paragraphText" data-ellipsis data-ellipsis-append="{{incrementing}}"></p>
+	<code>&lt;p data-ng-bind="paragraphText" data-ellipsis data-ellipsis-append="&#123;&#123;<span>incrementing</span>&#125;&#125;"&gt;&lt;/p&gt;</code>
+
+	<h5>Custom Append Text with Click Function</h5>
+	<p data-ng-bind="paragraphText" data-ellipsis data-ellipsis-append="read more" data-ellipsis-append-click="showFullText()"></p>
+	<code>&lt;p data-ng-bind="paragraphText" data-ellipsis data-ellipsis-append="read more" data-ellipsis-append-click="showFullText()" &gt;&lt;/p&gt;</code>
 
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 
