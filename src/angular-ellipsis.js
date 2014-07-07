@@ -17,7 +17,7 @@
 
 	"use strict";
 
-	app.directive('ellipsis', function($timeout, $window) {
+	app.directive('ellipsis', ["$timeout", "$window", function($timeout, $window) {
 
 		return {
 			restrict	: 'A',
