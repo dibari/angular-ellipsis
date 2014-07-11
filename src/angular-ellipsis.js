@@ -1,5 +1,6 @@
 /**
- *	Angular directive to truncate multi-line text to visible height
+ *	Angular directive to truncate multi-line text to visible height.
+ *	Module name: angular-ellipsis
  *
  *	@param bind (angular bound value to append) REQUIRED
  *	@param ellipsisAppend (string) string to append at end of truncated text after ellipsis, can be HTML OPTIONAL
@@ -13,11 +14,12 @@
  *
  */
 
-(function(ng, app){
+(function(ng){
 
 	"use strict";
 
-	app.directive('ellipsis', ['$timeout', '$window', function($timeout, $window) {
+	ng.module('angular-ellipsis', [])
+	.directive('ellipsis', ['$timeout', '$window', function($timeout, $window) {
 
 		return {
 			restrict	: 'A',
@@ -128,4 +130,4 @@
 		};
 	}]);
 
-})(angular, exampleApp);
+})(angular);
