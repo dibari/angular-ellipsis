@@ -12,120 +12,115 @@
  *	@example <p data-ellipsis data-ng-bind="boundData" data-ellipsis-append="read more" data-ellipsis-append-click="displayFull()"></p>
  *
  */
+angular.module('dibari.angular-ellipsis',[])
 
-(function(ng, app){
+.directive('ellipsis', ['$timeout', '$window', function($timeout, $window) {
 
-	"use strict";
+	return {
+		restrict	: 'A',
+		scope		: {
+			ngBind				: '=',
+			ellipsisAppend		: '@',
+			ellipsisAppendClick	: '&',
+			ellipsisSymbol		: '@'
+		},
+		compile : function(elem, attr, linker) {
 
-	app.directive('ellipsis', function($timeout, $window) {
+			return function(scope, element, attributes) {
+				/* Window Resize Variables */
+					attributes.lastWindowResizeTime = 0;
+					attributes.lastWindowResizeWidth = 0;
+					attributes.lastWindowResizeHeight = 0;
+					attributes.lastWindowTimeoutEvent = null;
+				/* State Variables */
+					attributes.isTruncated = false;
 
-		return {
-			restrict	: 'A',
-			scope		: {
-				ngBind				: '=',
-				ellipsisAppend		: '@',
-				ellipsisAppendClick	: '&',
-				ellipsisSymbol		: '@'
-			},
-			compile : function(elem, attr, linker) {
+				function buildEllipsis() {
+					if (typeof(scope.ngBind) !== 'undefined') {
+						var bindArray = scope.ngBind.split(" "),
+							i = 0,
+							ellipsisSymbol = (typeof(attributes.ellipsisSymbol) !== 'undefined') ? attributes.ellipsisSymbol : '&hellip;',
+							appendString = (typeof(scope.ellipsisAppend) !== 'undefined' && scope.ellipsisAppend !== '') ? ellipsisSymbol + '<span>' + scope.ellipsisAppend + '</span>' : ellipsisSymbol;
 
-				return function(scope, element, attributes) {
-					/* Window Resize Variables */
-						attributes.lastWindowResizeTime = 0;
-						attributes.lastWindowResizeWidth = 0;
-						attributes.lastWindowResizeHeight = 0;
-						attributes.lastWindowTimeoutEvent = null;
-					/* State Variables */
 						attributes.isTruncated = false;
+						element.html(scope.ngBind);
 
-					function buildEllipsis() {
-						if (typeof(scope.ngBind) !== 'undefined') {
-							var bindArray = scope.ngBind.split(" "),
-								i = 0,
-								ellipsisSymbol = (typeof(attributes.ellipsisSymbol) !== 'undefined') ? attributes.ellipsisSymbol : '&hellip;',
-								appendString = (typeof(scope.ellipsisAppend) !== 'undefined' && scope.ellipsisAppend !== '') ? ellipsisSymbol + '<span>' + scope.ellipsisAppend + '</span>' : ellipsisSymbol;
+						// If text has overflow
+						if (isOverflowed(element)) {
+							var bindArrayStartingLength = bindArray.length,
+								initialMaxHeight = element[0].clientHeight;
 
-							attributes.isTruncated = false;
-							element.html(scope.ngBind);
+							element.html(scope.ngBind + appendString);
 
-							// If text has overflow
-							if (isOverflowed(element)) {
-								var bindArrayStartingLength = bindArray.length,
-									initialMaxHeight = element[0].clientHeight;
+							// Set complete text and remove one word at a time, until there is no overflow
+							for ( ; i < bindArrayStartingLength; i++) {
+								bindArray.pop();
+								element.html(bindArray.join(" ") + appendString);
 
-								element.html(scope.ngBind + appendString);
-
-								// Set complete text and remove one word at a time, until there is no overflow
-								for ( ; i < bindArrayStartingLength; i++) {
-									bindArray.pop();
-									element.html(bindArray.join(" ") + appendString);
-
-									if (element[0].scrollHeight < initialMaxHeight || isOverflowed(element) === false) {
-										attributes.isTruncated = true;
-										break;
-									}
+								if (element[0].scrollHeight < initialMaxHeight || isOverflowed(element) === false) {
+									attributes.isTruncated = true;
+									break;
 								}
+							}
 
-								// If append string was passed and append click function included
-								if (ellipsisSymbol != appendString && typeof(scope.ellipsisAppendClick) !== 'undefined' && scope.ellipsisAppendClick !== '' ) {
-									element.find('span').bind("click", function (e) {
-										scope.$apply(scope.ellipsisAppendClick);
-									});
-								}
+							// If append string was passed and append click function included
+							if (ellipsisSymbol != appendString && typeof(scope.ellipsisAppendClick) !== 'undefined' && scope.ellipsisAppendClick !== '' ) {
+								element.find('span').bind("click", function (e) {
+									scope.$apply(scope.ellipsisAppendClick);
+								});
 							}
 						}
 					}
+				}
+
+			   /**
+				*	Test if element has overflow of text beyond height or max-height
+				*
+				*	@param element (DOM object)
+				*
+				*	@return bool
+				*
+				*/
+				function isOverflowed(thisElement) {
+					return thisElement[0].scrollHeight > thisElement[0].clientHeight;
+				}
+
+			   /**
+				*	Watchers
+				*/
 
 				   /**
-					*	Test if element has overflow of text beyond height or max-height
-					*
-					*	@param element (DOM object)
-					*
-					*	@return bool
-					*
+					*	Execute ellipsis truncate on ngBind update
 					*/
-					function isOverflowed(thisElement) {
-						return thisElement[0].scrollHeight > thisElement[0].clientHeight;
-					}
+					scope.$watch('ngBind', function () {
+						buildEllipsis();
+					});
 
 				   /**
-					*	Watchers
+					*	Execute ellipsis truncate on ngBind update
 					*/
+					scope.$watch('ellipsisAppend', function () {
+						buildEllipsis();
+					});
 
-					   /**
-						*	Execute ellipsis truncate on ngBind update
-						*/
-						scope.$watch('ngBind', function () {
-							buildEllipsis();
-						});
+				   /**
+					*	When window width or height changes - re-init truncation
+					*/
+					angular.element($window).bind('resize', function () {
+						$timeout.cancel(attributes.lastWindowTimeoutEvent);
 
-					   /**
-						*	Execute ellipsis truncate on ngBind update
-						*/
-						scope.$watch('ellipsisAppend', function () {
-							buildEllipsis();
-						});
+						attributes.lastWindowTimeoutEvent = $timeout(function() {
+							if (attributes.lastWindowResizeWidth != window.innerWidth || attributes.lastWindowResizeHeight != window.innerHeight) {
+								buildEllipsis();
+							}
 
-					   /**
-						*	When window width or height changes - re-init truncation
-						*/
-						angular.element($window).bind('resize', function () {
-							$timeout.cancel(attributes.lastWindowTimeoutEvent);
-
-							attributes.lastWindowTimeoutEvent = $timeout(function() {
-								if (attributes.lastWindowResizeWidth != window.innerWidth || attributes.lastWindowResizeHeight != window.innerHeight) {
-									buildEllipsis();
-								}
-
-								attributes.lastWindowResizeWidth = window.innerWidth;
-								attributes.lastWindowResizeHeight = window.innerHeight;
-							}, 75);
-						});
+							attributes.lastWindowResizeWidth = window.innerWidth;
+							attributes.lastWindowResizeHeight = window.innerHeight;
+						}, 75);
+					});
 
 
-				};
-			}
-		};
-	});
-
-})(angular, exampleApp);
+			};
+		}
+	};
+}]);
