@@ -14,7 +14,7 @@
  */
 angular.module('dibari.angular-ellipsis',[])
 
-.directive('ellipsis', function($timeout, $window) {
+.directive('ellipsis', ['$timeout', '$window', function($timeout, $window) {
 
 	return {
 		restrict	: 'A',
@@ -123,4 +123,4 @@ angular.module('dibari.angular-ellipsis',[])
 			};
 		}
 	};
-});
+}]);
