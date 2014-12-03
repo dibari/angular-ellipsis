@@ -118,8 +118,13 @@ angular.module('dibari.angular-ellipsis',[])
 							attributes.lastWindowResizeHeight = window.innerHeight;
 						}, 75);
 					});
-
-
+					
+					 /**
+					*	Execute ellipsis truncate when resizing or showing the element.
+					*/
+					element.bind('resize', function () {
+					  buildEllipsis();
+					});
 			};
 		}
 	};
