@@ -102,22 +102,6 @@ angular.module('dibari.angular-ellipsis',[])
 					scope.$watch('ellipsisAppend', function () {
 						buildEllipsis();
 					});
-
-				   /**
-					*	When window width or height changes - re-init truncation
-					*/
-					angular.element($window).bind('resize', function () {
-						$timeout.cancel(attributes.lastWindowTimeoutEvent);
-
-						attributes.lastWindowTimeoutEvent = $timeout(function() {
-							if (attributes.lastWindowResizeWidth != window.innerWidth || attributes.lastWindowResizeHeight != window.innerHeight) {
-								buildEllipsis();
-							}
-
-							attributes.lastWindowResizeWidth = window.innerWidth;
-							attributes.lastWindowResizeHeight = window.innerHeight;
-						}, 75);
-					});
 					
 					 /**
 					*	Execute ellipsis truncate when resizing or showing the element.
