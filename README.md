@@ -2,7 +2,7 @@ angular-ellipsis
 ================
 
 Angular directive to truncate multi-line text to visible height.  The end of the visible text is appended with an ellipsis, optional text, and optional click callback function.
-   
+
 To use, copy *src/angular-ellipsis.js* to your project and rename the included module (which is set to 'exampleApp' at the bottom) to your own module.
 
 DEMO
@@ -24,28 +24,33 @@ BASIC USAGE
 4. Text will be truncated to visible area, and an ellipsis (...) will be added to the end
 
 ### Simple example
-``<p data-ng-bind="paragraphText" data-ellipsis></p>``   
+``<p data-ng-bind="paragraphText" data-ellipsis></p>``
 
 OPTIONS
 --------
-* **Custom Ellipsis Symbol**   
-A custom ellipsis string can be used.  If this value is set, it will replace the default ellipsis (...).  This value will be appended at the end of the truncated text, before a custom append (if included).  Example:   
-``<p data-ng-bind="paragraphText" data-ellipsis data-ellipsis-symbol="--"></p>``   
-``<p data-ng-bind="paragraphText" data-ellipsis data-ellipsis-append="read more" data-ellipsis-symbol="--"></p>``   
+* **Custom Ellipsis Symbol**
+A custom ellipsis string can be used.  If this value is set, it will replace the default ellipsis (...).  This value will be appended at the end of the truncated text, before a custom append (if included).  Example:
+``<p data-ng-bind="paragraphText" data-ellipsis data-ellipsis-symbol="--"></p>``
+``<p data-ng-bind="paragraphText" data-ellipsis data-ellipsis-append="read more" data-ellipsis-symbol="--"></p>``
 
-* **Custom Append Text**   
-You can include a custom string after the ellipsis by setting the attribute *ellipsis-append*/*data-ellipsis-append* on the element.  This value may be bound to a scope variable instead of just being a static string.  If a scope value is used, the direcive will update the appended text on its update.  Only text may be used, not HTML.  When rendered in the truncated text, this custom string wrapped in a *span* tag, and can be styled through CSS as usual.  Examples:   
-``<p data-ng-bind="paragraphText" data-ellipsis data-ellipsis-append="read more"></p>``   
-``<p data-ng-bind="paragraphText" data-ellipsis data-ellipsis-append="scope.appendString"></p>``   
+* **Custom Append Text**
+You can include a custom string after the ellipsis by setting the attribute *ellipsis-append*/*data-ellipsis-append* on the element.  This value may be bound to a scope variable instead of just being a static string.  If a scope value is used, the direcive will update the appended text on its update.  Only text may be used, not HTML.  When rendered in the truncated text, this custom string wrapped in a *span* tag, and can be styled through CSS as usual.  Examples:
+``<p data-ng-bind="paragraphText" data-ellipsis data-ellipsis-append="read more"></p>``
+``<p data-ng-bind="paragraphText" data-ellipsis data-ellipsis-append="scope.appendString"></p>``
 
-* **Custom Append Text Click Function**   
-If a custom append string is included, a function can be executed on the resulting span tag's click.  The function must exist within the controller's scope.  If an ellipsis append string is not included, the function will not execute (since it has no element to bind to).  Example:   
-``<p data-ng-bind="paragraphText" data-ellipsis data-ellipsis-append="read more" data-ellipsis-append-click="onClickFunction()"></p>``   
+* **Custom Append Class**
+You can include a custom class after the ellipsis by setting the attribute *ellipsis-append-class*/*data-ellipsis-append-class* on the element.
+ Example:
+``<p data-ng-bind="paragraphText" data-ellipsis data-ellipsis-append="read more" data-ellipsis-append-class="text-red" ></p>``
+
+* **Custom Append Text Click Function**
+If a custom append string is included, a function can be executed on the resulting span tag's click.  The function must exist within the controller's scope.  If an ellipsis append string is not included, the function will not execute (since it has no element to bind to).  Example:
+``<p data-ng-bind="paragraphText" data-ellipsis data-ellipsis-append="read more" data-ellipsis-append-click="onClickFunction()"></p>``
 
 COMPATIBILITY
 --------
-Works on modern web browers, which includes any relatively recent version of Chrome, Firefox, Safari, and IE 9+.  Although there is no formally-maintained list, mobile device support is quite thorough.  I will update cross-browser and device issues if they are entered as issues.   
-* To make the plugin work in non-modern versions of Internet Explorer, be sure to review the [Angular Internet Explorer Compatibility page](http://docs.angularjs.org/guide/ie).  This [StackOverflow question](http://stackoverflow.com/questions/18506458/sceiequirks-strict-contextual-escaping-does-not-support-internet-explorer-ve) regarding the [Angular $sce service](http://docs.angularjs.org/api/ng.$sce) addresses an issue with the ng-bind directive.   
+Works on modern web browers, which includes any relatively recent version of Chrome, Firefox, Safari, and IE 9+.  Although there is no formally-maintained list, mobile device support is quite thorough.  I will update cross-browser and device issues if they are entered as issues.
+* To make the plugin work in non-modern versions of Internet Explorer, be sure to review the [Angular Internet Explorer Compatibility page](http://docs.angularjs.org/guide/ie).  This [StackOverflow question](http://stackoverflow.com/questions/18506458/sceiequirks-strict-contextual-escaping-does-not-support-internet-explorer-ve) regarding the [Angular $sce service](http://docs.angularjs.org/api/ng.$sce) addresses an issue with the ng-bind directive.
 * One suggested use case for < IE 8 implementation is to maintain an additional non-truncated element with overflow set to hidden.  Using IE conditional CSS, the truncated element can be displayed to IE 8 and above, and the non-truncated version to < IE 8.
 
 TODO's
