@@ -106,7 +106,8 @@ angular.module('dibari.angular-ellipsis',[])
 				   /**
 					*	When window width or height changes - re-init truncation
 					*/
-					angular.element($window).bind('resize', function () {
+
+					function onResize() {
 						$timeout.cancel(attributes.lastWindowTimeoutEvent);
 
 						attributes.lastWindowTimeoutEvent = $timeout(function() {
@@ -117,6 +118,16 @@ angular.module('dibari.angular-ellipsis',[])
 							attributes.lastWindowResizeWidth = window.innerWidth;
 							attributes.lastWindowResizeHeight = window.innerHeight;
 						}, 75);
+					}
+
+					var $win = angular.element($window);
+					$win.bind('resize', onResize);
+
+					/**
+					* Clean up after ourselves
+					*/
+					scope.$on('$destroy', function() {
+					  $win.unbind('resize', onResize);
 					});
 
 
