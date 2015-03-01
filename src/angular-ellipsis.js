@@ -38,40 +38,32 @@ angular.module('dibari.angular-ellipsis',[])
 				function buildEllipsis() {
 					if (typeof(scope.ngBind) !== 'undefined') {
 						var bindArray = scope.ngBind.split(" "),
-							i = 0,
 							ellipsisSymbol = (typeof(attributes.ellipsisSymbol) !== 'undefined') ? attributes.ellipsisSymbol : '&hellip;',
 							appendString = (typeof(scope.ellipsisAppend) !== 'undefined' && scope.ellipsisAppend !== '') ? ellipsisSymbol + '<span>' + scope.ellipsisAppend + '</span>' : ellipsisSymbol;
 
 						attributes.isTruncated = false;
 						element.html(scope.ngBind);
 
-						// If text has overflow
-						if (isOverflowed(element)) {
-							var bindArrayStartingLength = bindArray.length,
-								initialMaxHeight = element[0].clientHeight;
-
-							element.html(scope.ngBind + appendString);
-
-							// Set complete text and remove one word at a time, until there is no overflow
-							for ( ; i < bindArrayStartingLength; i++) {
-								bindArray.pop();
-								element.html(bindArray.join(" ") + appendString);
-
-								if (element[0].scrollHeight < initialMaxHeight || isOverflowed(element) === false) {
-									attributes.isTruncated = true;
-									break;
-								}
-							}
-
-							// If append string was passed and append click function included
-							if (ellipsisSymbol != appendString && typeof(scope.ellipsisAppendClick) !== 'undefined' && scope.ellipsisAppendClick !== '' ) {
-								element.find('span').bind("click", function (e) {
-									scope.$apply(scope.ellipsisAppendClick);
-								});
+						// refine the algorithm to improve the performance significantly
+						//                            --huang.jian@gteamstaff.com 20150228
+						var desiredHeight = element[0].clientHeight;
+						var actualHeight = element[0].scrollHeight;
+						if (actualHeight > desiredHeight) {
+							// PERFORMANCE IMPROVEMENT: calc the proper size by heights
+							var size = Math.floor(bindArray.length *
+																	 desiredHeight / actualHeight);
+							var text = bindArray.slice(0, size).join(' ');
+							element.html(text + appendString);
+							while (isOverflowed(element) && size > 0) {
+								--size;
+								// PERFORMANCE IMPROVEMENT: use String.substr rather than Array.join
+								text = text.substr(0, text.length - bindArray[size].length - 1);
+								element.html(text + appendString);
 							}
 						}
 					}
 				}
+
 
 			   /**
 				*	Test if element has overflow of text beyond height or max-height
