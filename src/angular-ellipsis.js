@@ -94,7 +94,24 @@ angular.module('dibari.angular-ellipsis',[])
 					scope.$watch('ellipsisAppend', function () {
 						buildEllipsis();
 					});
-
+					
+					/**
+					 * Execute ellipsis truncate on element size change
+					 *
+					 * element's size could be changed by some other directives
+					 *
+					 * added by huang.jian@gteamstaff.com
+					 */
+					scope.$watch(
+						function() {
+							return element.width() + 'x' + element.height();
+						},
+						function (newValue, oldValue) {
+							if (newValue !== oldValue){
+								buildEllipsis();
+							}
+						}
+					);
 				   /**
 					*	When window width or height changes - re-init truncation
 					*/
