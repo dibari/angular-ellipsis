@@ -37,27 +37,42 @@ angular.module('dibari.angular-ellipsis',[])
 
 				function buildEllipsis() {
 					if (typeof(scope.ngBind) !== 'undefined') {
-						var bindArray = scope.ngBind.split(" "),
+						var str = scope.ngBind,
 							ellipsisSymbol = (typeof(attributes.ellipsisSymbol) !== 'undefined') ? attributes.ellipsisSymbol : '&hellip;',
 							appendString = (typeof(scope.ellipsisAppend) !== 'undefined' && scope.ellipsisAppend !== '') ? ellipsisSymbol + '<span>' + scope.ellipsisAppend + '</span>' : ellipsisSymbol;
 
 						attributes.isTruncated = false;
 						element.html(scope.ngBind);
 
-						// refine the algorithm to improve the performance significantly
-						//                            --huang.jian@gteamstaff.com 20150228
 						var desiredHeight = element[0].clientHeight;
 						var actualHeight = element[0].scrollHeight;
 						if (actualHeight > desiredHeight) {
-							// PERFORMANCE IMPROVEMENT: calc the proper size by heights
-							var size = Math.floor(bindArray.length *
-																	 desiredHeight / actualHeight);
-							var text = bindArray.slice(0, size).join(' ');
+							attributes.isTruncated = true;
+
+							var spliter = ' ';
+							var lineHeight = parseFloat(element.css('line-height'));
+
+							// the max possible characters that might not overflow the desired height
+							var max = Math.ceil(str.length * (desiredHeight + lineHeight) / actualHeight);
+
+							// the min characters that must not overflow the desired height
+							var min = Math.floor(str.length * (desiredHeight - lineHeight) / actualHeight);
+							min = str.substr(0, min).lastIndexOf(spliter);
+
+							// set with the max possible size, then reduce its size word by word
+							var size = str.indexOf(spliter, max);
+							if (size < 0) {
+								// no spliter after max
+								size = max;
+							}
+
+							var text = str.substr(0, size).trim();
+							var arr = str.substr(min, size - min).trim().split(spliter);
+							var idx = arr.length;
 							element.html(text + appendString);
-							while (isOverflowed(element) && size > 0) {
-								--size;
-								// PERFORMANCE IMPROVEMENT: use String.substr rather than Array.join
-								text = text.substr(0, text.length - bindArray[size].length - 1);
+							while (isOverflowed(element) && idx >= 0) {
+								--idx;
+								text = text.substr(0, text.length - arr[idx].length - 1);
 								element.html(text + appendString);
 							}
 						}
