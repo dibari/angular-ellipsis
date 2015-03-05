@@ -37,41 +37,48 @@ angular.module('dibari.angular-ellipsis',[])
 
 				function buildEllipsis() {
 					if (typeof(scope.ngBind) !== 'undefined') {
-						var bindArray = scope.ngBind.split(" "),
-							i = 0,
+						var str = scope.ngBind,
 							ellipsisSymbol = (typeof(attributes.ellipsisSymbol) !== 'undefined') ? attributes.ellipsisSymbol : '&hellip;',
 							appendString = (typeof(scope.ellipsisAppend) !== 'undefined' && scope.ellipsisAppend !== '') ? ellipsisSymbol + '<span>' + scope.ellipsisAppend + '</span>' : ellipsisSymbol;
 
 						attributes.isTruncated = false;
 						element.html(scope.ngBind);
 
-						// If text has overflow
-						if (isOverflowed(element)) {
-							var bindArrayStartingLength = bindArray.length,
-								initialMaxHeight = element[0].clientHeight;
+						var desiredHeight = element[0].clientHeight;
+						var actualHeight = element[0].scrollHeight;
+						if (actualHeight > desiredHeight) {
+							attributes.isTruncated = true;
 
-							element.html(scope.ngBind + appendString);
+							var spliter = ' ';
+							var lineHeight = parseFloat(element.css('line-height'));
 
-							// Set complete text and remove one word at a time, until there is no overflow
-							for ( ; i < bindArrayStartingLength; i++) {
-								bindArray.pop();
-								element.html(bindArray.join(" ") + appendString);
+							// the max possible characters that might not overflow the desired height
+							var max = Math.ceil(str.length * (desiredHeight + lineHeight) / actualHeight);
 
-								if (element[0].scrollHeight < initialMaxHeight || isOverflowed(element) === false) {
-									attributes.isTruncated = true;
-									break;
-								}
+							// the min characters that must not overflow the desired height
+							var min = Math.floor(str.length * (desiredHeight - lineHeight) / actualHeight);
+							min = str.substr(0, min).lastIndexOf(spliter);
+
+							// set with the max possible size, then reduce its size word by word
+							var size = str.indexOf(spliter, max);
+							if (size < 0) {
+								// no spliter after max
+								size = max;
 							}
 
-							// If append string was passed and append click function included
-							if (ellipsisSymbol != appendString && typeof(scope.ellipsisAppendClick) !== 'undefined' && scope.ellipsisAppendClick !== '' ) {
-								element.find('span').bind("click", function (e) {
-									scope.$apply(scope.ellipsisAppendClick);
-								});
+							var text = str.substr(0, size).trim();
+							var arr = str.substr(min, size - min).trim().split(spliter);
+							var idx = arr.length;
+							element.html(text + appendString);
+							while (isOverflowed(element) && idx >= 0) {
+								--idx;
+								text = text.substr(0, text.length - arr[idx].length - 1);
+								element.html(text + appendString);
 							}
 						}
 					}
 				}
+
 
 			   /**
 				*	Test if element has overflow of text beyond height or max-height
@@ -102,7 +109,24 @@ angular.module('dibari.angular-ellipsis',[])
 					scope.$watch('ellipsisAppend', function () {
 						buildEllipsis();
 					});
-
+					
+					/**
+					 * Execute ellipsis truncate on element size change
+					 *
+					 * element's size could be changed by some other directives
+					 *
+					 * added by huang.jian@gteamstaff.com
+					 */
+					scope.$watch(
+						function() {
+							return element.width() + 'x' + element.height();
+						},
+						function (newValue, oldValue) {
+							if (newValue !== oldValue){
+								buildEllipsis();
+							}
+						}
+					);
 				   /**
 					*	When window width or height changes - re-init truncation
 					*/
