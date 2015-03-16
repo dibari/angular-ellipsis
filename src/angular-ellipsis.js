@@ -93,7 +93,9 @@ angular.module('dibari.angular-ellipsis',[])
 					*	Execute ellipsis truncate on ngBind update
 					*/
 					scope.$watch('ngBind', function () {
-						buildEllipsis();
+						$timeout(function() {
+							buildEllipsis();
+						});
 					});
 
 				   /**
