@@ -22,6 +22,7 @@ angular.module('dibari.angular-ellipsis',[])
 			ngBind				: '=',
 			ellipsisAppend		: '@',
 			ellipsisAppendClick	: '&',
+			ellipsisBreakWord	: '&',
 			ellipsisSymbol		: '@'
 		},
 		compile : function(elem, attr, linker) {
@@ -37,7 +38,8 @@ angular.module('dibari.angular-ellipsis',[])
 
 				function buildEllipsis() {
 					if (scope.ngBind) {
-						var bindArray = scope.ngBind.split(" "),
+						var seperator = scope.ellipsisBreakWord() ? "" : " ",
+							bindArray = scope.ngBind.split(seperator),
 							i = 0,
 							ellipsisSymbol = (typeof(attributes.ellipsisSymbol) !== 'undefined') ? attributes.ellipsisSymbol : '&hellip;',
 							appendString = (typeof(scope.ellipsisAppend) !== 'undefined' && scope.ellipsisAppend !== '') ? ellipsisSymbol + '<span>' + scope.ellipsisAppend + '</span>' : ellipsisSymbol;
@@ -55,7 +57,7 @@ angular.module('dibari.angular-ellipsis',[])
 							// Set complete text and remove one word at a time, until there is no overflow
 							for ( ; i < bindArrayStartingLength; i++) {
 								bindArray.pop();
-								element.html(bindArray.join(" ") + appendString);
+								element.html(bindArray.join(seperator) + appendString);
 
 								if (element[0].scrollHeight < initialMaxHeight || isOverflowed(element) === false) {
 									attributes.isTruncated = true;
