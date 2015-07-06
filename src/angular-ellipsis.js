@@ -36,7 +36,7 @@ angular.module('dibari.angular-ellipsis',[])
 					attributes.isTruncated = false;
 
 				function buildEllipsis() {
-					if (typeof(scope.ngBind) !== 'undefined') {
+					if (scope.ngBind) {
 						var bindArray = scope.ngBind.split(" "),
 							i = 0,
 							ellipsisSymbol = (typeof(attributes.ellipsisSymbol) !== 'undefined') ? attributes.ellipsisSymbol : '&hellip;',
@@ -93,7 +93,9 @@ angular.module('dibari.angular-ellipsis',[])
 					*	Execute ellipsis truncate on ngBind update
 					*/
 					scope.$watch('ngBind', function () {
-						buildEllipsis();
+						$timeout(function() {
+							buildEllipsis();
+						});
 					});
 
 				   /**
