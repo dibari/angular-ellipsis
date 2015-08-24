@@ -3,8 +3,9 @@
  *
  *	@param bind (angular bound value to append) REQUIRED
  *	@param ellipsisAppend (string) string to append at end of truncated text after ellipsis, can be HTML OPTIONAL
- *	@param ellipsisSymbol (string) string to use as ellipsis, replaces default '...' OPTIONAL
  *	@param ellipsisAppendClick (function) function to call if ellipsisAppend is clicked (ellipsisAppend must be clicked) OPTIONAL
+ *	@param ellipsisSymbol (string) string to use as ellipsis, replaces default '...' OPTIONAL
+ *	@param ellipsisSeparator (string) separator to split string, replaces default ' ' OPTIONAL
  *
  *	@example <p data-ellipsis data-ng-bind="boundData"></p>
  *	@example <p data-ellipsis data-ng-bind="boundData" data-ellipsis-symbol="---"></p>
@@ -22,7 +23,8 @@ angular.module('dibari.angular-ellipsis',[])
 			ngBind				: '=',
 			ellipsisAppend		: '@',
 			ellipsisAppendClick	: '&',
-			ellipsisSymbol		: '@'
+			ellipsisSymbol		: '@',
+			ellipsisSeparator	: '@'
 		},
 		compile : function(elem, attr, linker) {
 
@@ -37,10 +39,11 @@ angular.module('dibari.angular-ellipsis',[])
 
 				function buildEllipsis() {
 					if (scope.ngBind) {
-						var bindArray = scope.ngBind.split(" "),
-							i = 0,
+						var i = 0,
 							ellipsisSymbol = (typeof(attributes.ellipsisSymbol) !== 'undefined') ? attributes.ellipsisSymbol : '&hellip;',
-							appendString = (typeof(scope.ellipsisAppend) !== 'undefined' && scope.ellipsisAppend !== '') ? ellipsisSymbol + '<span>' + scope.ellipsisAppend + '</span>' : ellipsisSymbol;
+							ellipsisSeparator = (typeof(scope.ellipsisSeparator) !== 'undefined') ? attributes.ellipsisSeparator : ' ',
+							appendString = (typeof(scope.ellipsisAppend) !== 'undefined' && scope.ellipsisAppend !== '') ? ellipsisSymbol + '<span>' + scope.ellipsisAppend + '</span>' : ellipsisSymbol,
+							bindArray = scope.ngBind.split(ellipsisSeparator);
 
 						attributes.isTruncated = false;
 						element.text(scope.ngBind);
@@ -55,7 +58,7 @@ angular.module('dibari.angular-ellipsis',[])
 							// Set complete text and remove one word at a time, until there is no overflow
 							for ( ; i < bindArrayStartingLength; i++) {
 								bindArray.pop();
-								element.text(bindArray.join(" ")).html(element.html() + appendString);
+								element.text(bindArray.join(ellipsisSeparator)).html(element.html() + appendString);
 
 								if (element[0].scrollHeight < initialMaxHeight || isOverflowed(element) === false) {
 									attributes.isTruncated = true;

@@ -42,6 +42,10 @@ You can include a custom string after the ellipsis by setting the attribute *ell
 If a custom append string is included, a function can be executed on the resulting span tag's click.  The function must exist within the controller's scope.  If an ellipsis append string is not included, the function will not execute (since it has no element to bind to).  Example:   
 ``<p data-ng-bind="paragraphText" data-ellipsis data-ellipsis-append="read more" data-ellipsis-append-click="onClickFunction()"></p>``   
 
+* **Custom String Separator**
+You can use string separator to split the string by something else than " " (space). Example (split by characters):
+``<p data-ng-bind="paragraphText" data-ellipsis data-separator=""></p>``
+
 COMPATIBILITY
 --------
 Works on modern web browers, which includes any relatively recent version of Chrome, Firefox, Safari, and IE 9+.  Although there is no formally-maintained list, mobile device support is quite thorough.  I will update cross-browser and device issues if they are entered as issues.   
