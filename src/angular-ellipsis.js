@@ -73,7 +73,7 @@ angular.module('dibari.angular-ellipsis',[])
 							if (ellipsisSymbol != appendString && typeof(scope.ellipsisAppendClick) !== 'undefined' && scope.ellipsisAppendClick !== '' ) {
 								element.find('span').bind("click", function (e) {
 									scope.$apply(function () {
-										scope.ellipsisAppendClick.apply(this, e);
+										scope.ellipsisAppendClick.call(scope, {event:e});
 									});
 								});
 							}
