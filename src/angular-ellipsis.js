@@ -21,6 +21,7 @@ angular.module('dibari.angular-ellipsis',[])
 		restrict	: 'A',
 		scope		: {
 			ngBind				: '=',
+			ngBindHtml			: '=',
 			ellipsisAppend		: '@',
 			ellipsisAppendClick	: '&',
 			ellipsisSymbol		: '@',
@@ -38,7 +39,8 @@ angular.module('dibari.angular-ellipsis',[])
 					attributes.isTruncated = false;
 
 				function buildEllipsis() {
-					if (scope.ngBind) {
+					var binding = scope.ngBind || scope.ngBindHtml;
+					if (binding) {
 						var i = 0,
 							ellipsisSymbol = (typeof(attributes.ellipsisSymbol) !== 'undefined') ? attributes.ellipsisSymbol : '&hellip;',
 							ellipsisSeparator = (typeof(scope.ellipsisSeparator) !== 'undefined') ? attributes.ellipsisSeparator : ' ',
@@ -46,14 +48,14 @@ angular.module('dibari.angular-ellipsis',[])
 							bindArray = scope.ngBind.split(ellipsisSeparator);
 
 						attributes.isTruncated = false;
-						element.text(scope.ngBind);
+						element.html(binding);
 
 						// If text has overflow
 						if (isOverflowed(element)) {
 							var bindArrayStartingLength = bindArray.length,
 								initialMaxHeight = element[0].clientHeight;
 
-							element.text(scope.ngBind).html(element.html() + appendString);
+							element.html(binding + appendString);
 
 							//Set data-overflow on element for targeting
 							element.attr('data-overflowed', 'true');
@@ -61,7 +63,7 @@ angular.module('dibari.angular-ellipsis',[])
 							// Set complete text and remove one word at a time, until there is no overflow
 							for ( ; i < bindArrayStartingLength; i++) {
 								bindArray.pop();
-								element.text(bindArray.join(ellipsisSeparator)).html(element.html() + appendString);
+								element.html(bindArray.join(ellipsisSeparator) + appendString);
 
 								if (element[0].scrollHeight < initialMaxHeight || isOverflowed(element) === false) {
 									attributes.isTruncated = true;
@@ -99,6 +101,15 @@ angular.module('dibari.angular-ellipsis',[])
 					*	Execute ellipsis truncate on ngBind update
 					*/
 					scope.$watch('ngBind', function () {
+						$timeout(function() {
+							buildEllipsis();
+						});
+					});
+
+				   /**
+					*	Execute ellipsis truncate on ngBindHtml update
+					*/
+					scope.$watch('ngBindHtml', function () {
 						$timeout(function() {
 							buildEllipsis();
 						});
