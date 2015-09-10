@@ -24,8 +24,7 @@ angular.module('dibari.angular-ellipsis',[])
 			ellipsisAppend		: '@',
 			ellipsisAppendClick	: '&',
 			ellipsisSymbol		: '@',
-			ellipsisSeparator	: '@',
-			ellipsisSeparatorReg: '='
+			ellipsisSeparator	: '@'
 		},
 		compile : function(elem, attr, linker) {
 
@@ -42,10 +41,9 @@ angular.module('dibari.angular-ellipsis',[])
 					if (scope.ngBind) {
 						var i = 0,
 							ellipsisSymbol = (typeof(attributes.ellipsisSymbol) !== 'undefined') ? attributes.ellipsisSymbol : '&hellip;',
-							ellipsisSeparator = (typeof(scope.ellipsisSeparator) !== 'undefined') ? attributes.ellipsisSeparator  : ' ',
-							ellipsisSeparatorReg =  (typeof(scope.ellipsisSeparatorReg) !== 'undefined') ? scope.ellipsisSeparatorReg : false,
+							ellipsisSeparator = (typeof(scope.ellipsisSeparator) !== 'undefined') ? attributes.ellipsisSeparator : ' ',
 							appendString = (typeof(scope.ellipsisAppend) !== 'undefined' && scope.ellipsisAppend !== '') ? ellipsisSymbol + '<span>' + scope.ellipsisAppend + '</span>' : ellipsisSymbol,
-							bindArray = ellipsisSeparatorReg ? binding.match(ellipsisSeparatorReg) : binding.split(ellipsisSeparator);
+							bindArray = scope.ngBind.split(ellipsisSeparator);
 
 						attributes.isTruncated = false;
 						element.text(scope.ngBind);
