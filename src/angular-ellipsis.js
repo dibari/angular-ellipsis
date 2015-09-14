@@ -26,6 +26,7 @@ angular.module('dibari.angular-ellipsis',[])
 			ellipsisAppendClick	: '&',
 			ellipsisSymbol		: '@',
 			ellipsisSeparator	: '@',
+			useParent			: "@",
 			ellipsisSeparatorReg: '='
 		},
 		compile : function(elem, attr, linker) {
@@ -38,7 +39,15 @@ angular.module('dibari.angular-ellipsis',[])
 					attributes.lastWindowTimeoutEvent = null;
 				/* State Variables */
 					attributes.isTruncated = false;
-
+				function getParentHeight(element){
+					var heightOfChildren = 0;
+					angular.forEach(element.parent().children(), function(child){
+						if(child!=element[0]){
+							heightOfChildren += child.clientHeight;
+						}
+					});
+					return element.parent()[0].clientHeight - heightOfChildren;
+				}
 				function buildEllipsis() {
 					var binding = scope.ngBind || scope.ngBindHtml;
 					if (binding) {
@@ -53,12 +62,11 @@ angular.module('dibari.angular-ellipsis',[])
 						element.html(binding);
 
 						// If text has overflow
-						if (isOverflowed(element)) {
+						if (isOverflowed(element,scope.useParent)) {
 							var bindArrayStartingLength = bindArray.length,
-								initialMaxHeight = element[0].clientHeight;
-
+								initialMaxHeight = scope.useParent?getParentHeight(element):element[0].clientHeight;
+							
 							element.html(binding + appendString);
-
 							//Set data-overflow on element for targeting
 							element.attr('data-overflowed', 'true');
 
@@ -67,7 +75,7 @@ angular.module('dibari.angular-ellipsis',[])
 								bindArray.pop();
 								element.html(bindArray.join(ellipsisSeparator) + appendString);
 
-								if (element[0].scrollHeight < initialMaxHeight || isOverflowed(element) === false) {
+								if ((scope.useParent?element.parent()[0]:element[0]).scrollHeight < initialMaxHeight || isOverflowed(element, scope.useParent) === false) {
 									attributes.isTruncated = true;
 									break;
 								}
@@ -93,7 +101,8 @@ angular.module('dibari.angular-ellipsis',[])
 				*	@return bool
 				*
 				*/
-				function isOverflowed(thisElement) {
+				function isOverflowed(thisElement,useParent) {
+					thisElement = useParent?thisElement.parent():thisElement;
 					return thisElement[0].scrollHeight > thisElement[0].clientHeight;
 				}
 
