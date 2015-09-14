@@ -20,12 +20,14 @@ angular.module('dibari.angular-ellipsis',[])
 	return {
 		restrict	: 'A',
 		scope		: {
-			ngBind			: '=',
+			ngBind				: '=',
+			ngBindHtml			: '=',
 			ellipsisAppend		: '@',
 			ellipsisAppendClick	: '&',
 			ellipsisSymbol		: '@',
 			ellipsisSeparator	: '@',
-			useParent		: "@"
+			useParent			: "@",
+			ellipsisSeparatorReg: '='
 		},
 		compile : function(elem, attr, linker) {
 
@@ -47,29 +49,31 @@ angular.module('dibari.angular-ellipsis',[])
 					return element.parent()[0].clientHeight - heightOfChildren;
 				}
 				function buildEllipsis() {
-					if (scope.ngBind) {
+					var binding = scope.ngBind || scope.ngBindHtml;
+					if (binding) {
 						var i = 0,
 							ellipsisSymbol = (typeof(attributes.ellipsisSymbol) !== 'undefined') ? attributes.ellipsisSymbol : '&hellip;',
-							ellipsisSeparator = (typeof(scope.ellipsisSeparator) !== 'undefined') ? attributes.ellipsisSeparator : ' ',
+							ellipsisSeparator = (typeof(scope.ellipsisSeparator) !== 'undefined') ? attributes.ellipsisSeparator  : ' ',
+							ellipsisSeparatorReg =  (typeof(scope.ellipsisSeparatorReg) !== 'undefined') ? scope.ellipsisSeparatorReg : false,
 							appendString = (typeof(scope.ellipsisAppend) !== 'undefined' && scope.ellipsisAppend !== '') ? ellipsisSymbol + '<span>' + scope.ellipsisAppend + '</span>' : ellipsisSymbol,
-							bindArray = scope.ngBind.split(ellipsisSeparator);
+							bindArray = ellipsisSeparatorReg ? binding.match(ellipsisSeparatorReg) : binding.split(ellipsisSeparator);
 
 						attributes.isTruncated = false;
-						element.text(scope.ngBind);
+						element.html(binding);
 
 						// If text has overflow
 						if (isOverflowed(element,scope.useParent)) {
 							var bindArrayStartingLength = bindArray.length,
 								initialMaxHeight = scope.useParent?getParentHeight(element):element[0].clientHeight;
-							element.text(scope.ngBind).html(element.html() + appendString);
-
+							
+							element.html(binding + appendString);
 							//Set data-overflow on element for targeting
 							element.attr('data-overflowed', 'true');
 
 							// Set complete text and remove one word at a time, until there is no overflow
 							for ( ; i < bindArrayStartingLength; i++) {
 								bindArray.pop();
-								element.text(bindArray.join(ellipsisSeparator)).html(element.html() + appendString);
+								element.html(bindArray.join(ellipsisSeparator) + appendString);
 
 								if ((scope.useParent?element.parent()[0]:element[0]).scrollHeight < initialMaxHeight || isOverflowed(element, scope.useParent) === false) {
 									attributes.isTruncated = true;
@@ -80,7 +84,9 @@ angular.module('dibari.angular-ellipsis',[])
 							// If append string was passed and append click function included
 							if (ellipsisSymbol != appendString && typeof(scope.ellipsisAppendClick) !== 'undefined' && scope.ellipsisAppendClick !== '' ) {
 								element.find('span').bind("click", function (e) {
-									scope.$apply(scope.ellipsisAppendClick);
+									scope.$apply(function () {
+										scope.ellipsisAppendClick.call(scope, {event:e});
+									});
 								});
 							}
 						}
@@ -108,6 +114,15 @@ angular.module('dibari.angular-ellipsis',[])
 					*	Execute ellipsis truncate on ngBind update
 					*/
 					scope.$watch('ngBind', function () {
+						$timeout(function() {
+							buildEllipsis();
+						});
+					});
+
+				   /**
+					*	Execute ellipsis truncate on ngBindHtml update
+					*/
+					scope.$watch('ngBindHtml', function () {
 						$timeout(function() {
 							buildEllipsis();
 						});
