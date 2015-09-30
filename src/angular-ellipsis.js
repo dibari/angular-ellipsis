@@ -17,6 +17,40 @@ angular.module('dibari.angular-ellipsis',[])
 
 .directive('ellipsis', ['$timeout', '$window', function($timeout, $window) {
 
+	var AsyncDigest = function(delay) {
+		var timeout = null;
+		var queue = [];
+
+		this.remove = function(fn) {
+			if (queue.indexOf(fn) !== -1) {
+				queue.splice(queue.indexOf(fn), 1);
+				if (queue.length === 0) {
+					$timeout.cancel(timeout);
+					timeout = null;
+				}
+			}
+		};
+		this.add = function(fn) {
+			if (queue.indexOf(fn) === -1) {
+				queue.push(fn);
+			}
+			if(!timeout) {
+				timeout = $timeout(function() {
+					var copy = queue.slice();
+					timeout = null;
+					// reset scheduled array first in case one of the functions throws an error
+					queue.length = 0;
+					copy.forEach(function(fn) {
+						fn();
+					});
+				}, delay);
+			}
+		};
+	};
+
+	var asyncDigestImmediate = new AsyncDigest(0);
+	var asyncDigestDebounced = new AsyncDigest(75);
+
 	return {
 		restrict	: 'A',
 		scope		: {
@@ -114,18 +148,14 @@ angular.module('dibari.angular-ellipsis',[])
 					*	Execute ellipsis truncate on ngBind update
 					*/
 					scope.$watch('ngBind', function () {
-						$timeout(function() {
-							buildEllipsis();
-						});
+						asyncDigestImmediate.add(buildEllipsis);
 					});
 
 				   /**
 					*	Execute ellipsis truncate on ngBindHtml update
 					*/
 					scope.$watch('ngBindHtml', function () {
-						$timeout(function() {
-							buildEllipsis();
-						});
+						asyncDigestImmediate.add(buildEllipsis);
 					});
 
 				   /**
@@ -135,21 +165,21 @@ angular.module('dibari.angular-ellipsis',[])
 						buildEllipsis();
 					});
 
+					function checkWindowForRebuild() {
+						if (attributes.lastWindowResizeWidth != window.innerWidth || attributes.lastWindowResizeHeight != window.innerHeight) {
+							buildEllipsis();
+						}
+
+						attributes.lastWindowResizeWidth = window.innerWidth;
+						attributes.lastWindowResizeHeight = window.innerHeight;
+					}
+
 				   /**
 					*	When window width or height changes - re-init truncation
 					*/
 
 					function onResize() {
-						$timeout.cancel(attributes.lastWindowTimeoutEvent);
-
-						attributes.lastWindowTimeoutEvent = $timeout(function() {
-							if (attributes.lastWindowResizeWidth != window.innerWidth || attributes.lastWindowResizeHeight != window.innerHeight) {
-								buildEllipsis();
-							}
-
-							attributes.lastWindowResizeWidth = window.innerWidth;
-							attributes.lastWindowResizeHeight = window.innerHeight;
-						}, 75);
+						asyncDigestDebounced.add(checkWindowForRebuild);
 					}
 
 					var $win = angular.element($window);
@@ -160,6 +190,8 @@ angular.module('dibari.angular-ellipsis',[])
 					*/
 					scope.$on('$destroy', function() {
 					  $win.unbind('resize', onResize);
+					  asyncDigestImmediate.remove(buildEllipsis);
+					  asyncDigestDebounced.remove(checkWindowForRebuild);
 					});
 
 
