@@ -110,7 +110,7 @@ angular.module('dibari.angular-ellipsis', [])
 							if (isHtml) {
 								element.html(binding + appendString);
 							} else {
-								element.text(binding + appendString);
+								element.text(binding).html(element.html() + appendString);
 							}
 							//Set data-overflow on element for targeting
 							element.attr('data-overflowed', 'true');
@@ -123,7 +123,7 @@ angular.module('dibari.angular-ellipsis', [])
 								if (isHtml) {
 									element.html(bindArray.join(ellipsisSeparator) + appendString);
 								} else {
-									element.text(bindArray.join(ellipsisSeparator) + appendString);
+									element.text(bindArray.join(ellipsisSeparator)).html(element.html() + appendString);
 								}
 
 								if ((scope.useParent ? element.parent()[0] : element[0]).scrollHeight < initialMaxHeight || isOverflowed(element, scope.useParent) === false) {
