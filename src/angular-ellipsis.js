@@ -84,6 +84,9 @@ angular.module('dibari.angular-ellipsis',[])
 				}
 				function buildEllipsis() {
 					var binding = scope.ngBind || scope.ngBindHtml;
+					if(binding.$$unwrapTrustedValue()) {
+						binding = binding.$$unwrapTrustedValue();
+					}
 					if (binding) {
 						var i = 0,
 							ellipsisSymbol = (typeof(attributes.ellipsisSymbol) !== 'undefined') ? attributes.ellipsisSymbol : '&hellip;',
