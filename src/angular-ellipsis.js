@@ -15,7 +15,7 @@
  */
 angular.module('dibari.angular-ellipsis', [])
 
-.directive('ellipsis', ['$timeout', '$window', function($timeout, $window) {
+.directive('ellipsis', ['$timeout', '$window', '$sce', function($timeout, $window, $sce) {
 
 	var AsyncDigest = function(delay) {
 		var timeout = null;
@@ -86,6 +86,11 @@ angular.module('dibari.angular-ellipsis', [])
 
 				function buildEllipsis() {
 					var binding = scope.ngBind || scope.ngBindHtml;
+					var isTrustedHTML = angular.isObject(binding) && $sce.getTrustedHtml(binding);
+					if(isTrustedHTML)
+					{
+						binding = $sce.getTrustedHtml(binding);
+					}
 					if (binding) {
 						var isHtml = (!(!!scope.ngBind) && !!(scope.ngBindHtml));
 						var i = 0,
@@ -140,6 +145,11 @@ angular.module('dibari.angular-ellipsis', [])
 										});
 									});
 								});
+							}
+
+							if(!isTrustedHTML)
+							{
+								$sce.trustAsHtml(binding);
 							}
 						}
 					}
