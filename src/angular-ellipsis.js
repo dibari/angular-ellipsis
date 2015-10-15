@@ -86,9 +86,9 @@ angular.module('dibari.angular-ellipsis', [])
 
 				function buildEllipsis() {
 					var binding = scope.ngBind || scope.ngBindHtml;
-					var isTrustedHTML = angular.isObject(binding) && $sce.getTrustedHtml(binding);
-					if(isTrustedHTML)
-					{
+					var isTrustedHTML = false;
+					if($sce.isEnabled() && angular.isObject(binding) && $sce.getTrustedHtml(binding)) {
+						isTrustedHTML = true;
 						binding = $sce.getTrustedHtml(binding);
 					}
 					if (binding) {
@@ -147,7 +147,7 @@ angular.module('dibari.angular-ellipsis', [])
 								});
 							}
 
-							if(!isTrustedHTML)
+							if(!isTrustedHTML && $sce.isEnabled())
 							{
 								$sce.trustAsHtml(binding);
 							}
