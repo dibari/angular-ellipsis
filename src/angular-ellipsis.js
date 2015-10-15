@@ -86,9 +86,6 @@ angular.module('dibari.angular-ellipsis', [])
 
 				function buildEllipsis() {
 					var binding = scope.ngBind || scope.ngBindHtml;
-					if(binding.$$unwrapTrustedValue()) {
-						binding = binding.$$unwrapTrustedValue();
-					}
 					if (binding) {
 						var isHtml = (!(!!scope.ngBind) && !!(scope.ngBindHtml));
 						var i = 0,
