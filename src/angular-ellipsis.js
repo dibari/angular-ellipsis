@@ -152,6 +152,9 @@ angular.module('dibari.angular-ellipsis', [])
 								$sce.trustAsHtml(binding);
 							}
 						}
+						else{
+							element.attr('data-overflowed', 'false');
+						}
 					}
 				}
 
