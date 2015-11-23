@@ -1,6 +1,7 @@
 {
 	"author": "https://github.com/dibari",
 	"name": "angular-ellipsis",
+	"main": "src/angular-ellipsis.js",
 	"keywords": [
 		"angular",
 		"directives",
