@@ -196,6 +196,13 @@ angular.module('dibari.angular-ellipsis', [])
 					buildEllipsis();
 				});
 
+				/**
+				*	Execute ellipsis truncate when element becomes visible
+				*/
+				scope.$watch(function() { return element.is(':visible') }, function() {
+    				asyncDigestDebounced.add(buildEllipsis);
+				});
+
 				function checkWindowForRebuild() {
 					if (attributes.lastWindowResizeWidth != window.innerWidth || attributes.lastWindowResizeHeight != window.innerHeight) {
 						buildEllipsis();
