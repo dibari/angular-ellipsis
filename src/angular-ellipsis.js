@@ -200,7 +200,7 @@ angular.module('dibari.angular-ellipsis', [])
 				*	Execute ellipsis truncate when element becomes visible
 				*/
 				scope.$watch(function() { return element.is(':visible') }, function() {
-    				asyncDigestDebounced.add(buildEllipsis);
+					asyncDigestDebounced.add(buildEllipsis);
 				});
 
 				function checkWindowForRebuild() {
