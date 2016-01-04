@@ -212,6 +212,9 @@ angular.module('dibari.angular-ellipsis', [])
 					attributes.lastWindowResizeHeight = window.innerHeight;
 				}
 
+				var unbindRefreshEllipsis = scope.$on('dibari:refresh-ellipsis', function() {
+					asyncDigestImmediate.add(buildEllipsis);
+				});
 				/**
 				 *	When window width or height changes - re-init truncation
 				 */
@@ -230,6 +233,10 @@ angular.module('dibari.angular-ellipsis', [])
 					$win.unbind('resize', onResize);
 					asyncDigestImmediate.remove(buildEllipsis);
 					asyncDigestDebounced.remove(checkWindowForRebuild);
+					if (unbindRefreshEllipsis) {
+						unbindRefreshEllipsis();
+						unbindRefreshEllipsis = null;
+					}
 				});
 
 
