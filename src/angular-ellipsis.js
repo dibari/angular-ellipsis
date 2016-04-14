@@ -122,7 +122,12 @@ angular.module('dibari.angular-ellipsis', [])
 
 							// Set complete text and remove one word at a time, until there is no overflow
 							for (; i < bindArrayStartingLength; i++) {
-								bindArray.pop();
+								var current = bindArray.pop();
+
+								//if the last string still overflowed, then truncate the last string
+								if (bindArray.length === 0) {
+									bindArray[0] = current.substring(0, Math.min(current.length, 5));
+								}
 
 								if (isHtml) {
 									element.html(bindArray.join(ellipsisSeparator) + appendString);
