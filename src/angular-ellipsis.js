@@ -177,7 +177,7 @@ angular.module('dibari.angular-ellipsis', [])
 				 */
 
 				/**
-				 *	Execute ellipsis truncate on ngBind update
+				 *	Execute ellipsis truncate on ngShow update
 				 */
 				scope.$watch('ngShow', function() {
 					asyncDigestImmediate.add(buildEllipsis);
