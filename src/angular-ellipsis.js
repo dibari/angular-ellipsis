@@ -54,6 +54,7 @@ angular.module('dibari.angular-ellipsis', [])
 	return {
 		restrict: 'A',
 		scope: {
+			ngShow: '=',
 			ngBind: '=',
 			ngBindHtml: '=',
 			ellipsisAppend: '@',
@@ -179,6 +180,13 @@ angular.module('dibari.angular-ellipsis', [])
 				/**
 				 *	Watchers
 				 */
+
+				/**
+				 *	Execute ellipsis truncate on ngShow update
+				 */
+				scope.$watch('ngShow', function() {
+					asyncDigestImmediate.add(buildEllipsis);
+				});
 
 				/**
 				 *	Execute ellipsis truncate on ngBind update
