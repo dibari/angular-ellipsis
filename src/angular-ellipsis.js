@@ -62,7 +62,8 @@ angular.module('dibari.angular-ellipsis', [])
 			ellipsisSymbol: '@',
 			ellipsisSeparator: '@',
 			useParent: "@",
-			ellipsisSeparatorReg: '='
+			ellipsisSeparatorReg: '=',
+			ellipsisFallbackFontSize:'@'
 		},
 		compile: function(elem, attr, linker) {
 
@@ -74,6 +75,10 @@ angular.module('dibari.angular-ellipsis', [])
 				attributes.lastWindowTimeoutEvent = null;
 				/* State Variables */
 				attributes.isTruncated = false;
+
+				function _isDefined(value) {
+					return typeof(value) !== 'undefined';
+				}
 
 				function getParentHeight(element) {
 					var heightOfChildren = 0;
@@ -106,6 +111,10 @@ angular.module('dibari.angular-ellipsis', [])
 							element.html(binding);
 						} else {
 							element.text(binding);
+						}
+
+						if (_isDefined(attributes.ellipsisFallbackFontSize) && isOverflowed(element)) {
+							element.css('font-size',attributes.ellipsisFallbackFontSize);	
 						}
 
 						// If text has overflow
