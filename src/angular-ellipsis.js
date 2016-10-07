@@ -130,26 +130,15 @@ angular.module('dibari.angular-ellipsis', [])
 							//Set data-overflow on element for targeting
 							element.attr('data-overflowed', 'true');
 
-							// Set complete text and remove one word at a time, until there is no overflow
-							for (; i < bindArrayStartingLength; i++) {
-								var current = bindArray.pop();
+              const leastUpperBound = calculateLeastUpperBound(element, bindArray, ellipsisSeparator, appendString, isHtml, scope, initialMaxHeight);
 
-								//if the last string still overflowed, then truncate the last string
-								if (bindArray.length === 0) {
-									bindArray[0] = current.substring(0, Math.min(current.length, 5));
-								}
+              if (isHtml) {
+                element.html(bindArray.slice(0, leastUpperBound).join(ellipsisSeparator) + appendString);
+              } else {
+                element.text(bindArray.slice(0, leastUpperBound).join(ellipsisSeparator)).html(element.html() + appendString);
+              }
 
-								if (isHtml) {
-									element.html(bindArray.join(ellipsisSeparator) + appendString);
-								} else {
-									element.text(bindArray.join(ellipsisSeparator)).html(element.html() + appendString);
-								}
-
-								if ((scope.useParent ? element.parent()[0] : element[0]).scrollHeight < initialMaxHeight || isOverflowed(element, scope.useParent) === false) {
-									attributes.isTruncated = true;
-									break;
-								}
-							}
+              attributes.isTruncated = true;
 
 							// If append string was passed and append click function included
 							if (ellipsisSymbol != appendString && typeof(scope.ellipsisAppendClick) !== 'undefined' && scope.ellipsisAppendClick !== '') {
@@ -185,6 +174,40 @@ angular.module('dibari.angular-ellipsis', [])
 					thisElement = useParent ? thisElement.parent() : thisElement;
 					return thisElement[0].scrollHeight > thisElement[0].clientHeight;
 				}
+
+			  function doesItFit(guess, element, bindArray, ellipsisSeparator, appendString, isHtml, scope, initialMaxHeight){
+					if (isHtml) {
+					  element.html(bindArray.slice(0, guess).join(ellipsisSeparator) + appendString);
+					} else {
+					  element.text(bindArray.slice(0, guess).join(ellipsisSeparator)).html(element.html() + appendString);
+					}
+
+				  return ((scope.useParent ? element.parent()[0] : element[0]).scrollHeight < initialMaxHeight || isOverflowed(element, scope.useParent) === false);
+			  }
+
+			  function calculateLeastUpperBound(element, bindArray, ellipsisSeparator, appendString, isHtml, scope, initialMaxHeight){
+	  			var upperBound = bindArray.length;
+          var lowerBound = 0;
+
+		      if(doesItFit(upperBound, element, bindArray, ellipsisSeparator, appendString, isHtml, scope, initialMaxHeight)){
+		        lowerBound = upperBound;
+		      } else {
+		        while(true){
+		          currentGuess = Math.floor((upperBound + lowerBound) / 2);
+		          if(doesItFit(currentGuess, element, bindArray, ellipsisSeparator, appendString, isHtml, scope, initialMaxHeight)){
+		            lowerBound = currentGuess;
+		          } else {
+		            upperBound = currentGuess;
+		          }
+
+		          if((upperBound - lowerBound) <= 1){
+		            break;
+		          }
+		        }
+		      }
+
+		      return lowerBound;
+			  }
 
 				/**
 				 *	Watchers
