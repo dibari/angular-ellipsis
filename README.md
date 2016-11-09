@@ -53,7 +53,7 @@ If a custom append string is included, a function can be executed on the resulti
 
 * **Custom String Separator**
 You can use string separator to split the string by something else than " " (space). Example (split by characters):
-``<p data-ng-bind="paragraphText" data-ellipsis data-separator=""></p>``
+``<p data-ng-bind="paragraphText" data-ellipsis data-ellipsis-separator=""></p>``
 
 * **Fallback Font-Size**
 You can specify a fallback font size.  If text is detected to overflow an attempt to resize the text to the fallback font-size will be made before ellipsis are added.
