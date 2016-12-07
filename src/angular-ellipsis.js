@@ -114,7 +114,7 @@ angular.module('dibari.angular-ellipsis', [])
 						}
 
 						if (_isDefined(attributes.ellipsisFallbackFontSize) && isOverflowed(element)) {
-							element.css('font-size',attributes.ellipsisFallbackFontSize);	
+							element.css('font-size',attributes.ellipsisFallbackFontSize);
 						}
 
 						// If text has overflow
@@ -129,6 +129,9 @@ angular.module('dibari.angular-ellipsis', [])
 							}
 							//Set data-overflow on element for targeting
 							element.attr('data-overflowed', 'true');
+
+							// Set variable for full text retrieval in parent scope (like in bootstrap popover, title...)
+							scope.$parent.$overflowFull = scope.ngBind;
 
 							// Set complete text and remove one word at a time, until there is no overflow
 							for (; i < bindArrayStartingLength; i++) {
@@ -168,7 +171,9 @@ angular.module('dibari.angular-ellipsis', [])
 							}
 						}
 						else{
+							// remove set data in case text is no longer overflowing
 							element.attr('data-overflowed', 'false');
+							scope.$parent.$overflowFull = '';
 						}
 					}
 				}
@@ -221,7 +226,7 @@ angular.module('dibari.angular-ellipsis', [])
 				/**
 				*	Execute ellipsis truncate when element becomes visible
 				*/
-				scope.$watch(function() { return element[0].offsetWidth != 0 && element[0].offsetHeight != 0 }, function() {
+				scope.$watch(function() { return element[0].offsetWidth !== 0 && element[0].offsetHeight !== 0 }, function() {
 					asyncDigestDebounced.add(buildEllipsis);
 				});
 
