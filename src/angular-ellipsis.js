@@ -131,7 +131,7 @@ angular.module('dibari.angular-ellipsis', [])
 							element.attr('data-overflowed', 'true');
 
 							// Set variable for full text retrieval in parent scope (like in bootstrap popover, title...)
-							scope.$parent.$overflowFull = scope.ngBind;
+							scope.$parent.$overflowFull = binding;
 
 							// Set complete text and remove one word at a time, until there is no overflow
 							for (; i < bindArrayStartingLength; i++) {
