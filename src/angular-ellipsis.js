@@ -61,9 +61,11 @@ angular.module('dibari.angular-ellipsis', [])
 			ellipsisAppendClick: '&',
 			ellipsisSymbol: '@',
 			ellipsisSeparator: '@',
-			useParent: "@",
+			useParent: '@',
+			ellipsisUseParent: '@',
 			ellipsisSeparatorReg: '=',
-			ellipsisFallbackFontSize:'@'
+			ellipsisMaxLines: '@',
+			ellipsisFallbackFontSize: '@'
 		},
 		compile: function(elem, attr, linker) {
 
@@ -93,62 +95,99 @@ angular.module('dibari.angular-ellipsis', [])
 				function buildEllipsis() {
 					var binding = scope.ngBind || scope.ngBindHtml;
 					var isTrustedHTML = false;
-					if($sce.isEnabled() && angular.isObject(binding) && $sce.getTrustedHtml(binding)) {
+					if ($sce.isEnabled() && angular.isObject(binding) && $sce.getTrustedHtml(binding)) {
 						isTrustedHTML = true;
 						binding = $sce.getTrustedHtml(binding);
 					}
 					if (binding) {
 						var isHtml = (!(!!scope.ngBind) && !!(scope.ngBindHtml));
 						var i = 0,
+							useParent = attributes.ellipsisUseParent || attributes.useParent,
+							ellipsisMaxLines = attributes.ellipsisMaxLines,
 							ellipsisSymbol = (typeof(attributes.ellipsisSymbol) !== 'undefined') ? attributes.ellipsisSymbol : '&hellip;',
-							ellipsisSeparator = (typeof(scope.ellipsisSeparator) !== 'undefined') ? attributes.ellipsisSeparator : ' ',
-							ellipsisSeparatorReg = (typeof(scope.ellipsisSeparatorReg) !== 'undefined') ? scope.ellipsisSeparatorReg : false,
-							appendString = (typeof(scope.ellipsisAppend) !== 'undefined' && scope.ellipsisAppend !== '') ? ellipsisSymbol + "<span class='angular-ellipsis-append'>" + scope.ellipsisAppend + '</span>' : ellipsisSymbol,
-							bindArray = ellipsisSeparatorReg ? binding.match(ellipsisSeparatorReg) : binding.split(ellipsisSeparator);
+							ellipsisSeparator = (typeof(attributes.ellipsisSeparator) !== 'undefined') ? attributes.ellipsisSeparator : ' ',
+							ellipsisSeparatorReg = (typeof(attributes.ellipsisSeparatorReg) !== 'undefined') ? attributes.ellipsisSeparatorReg : new RegExp('[' + ellipsisSeparator + ']+', 'gm'),
+							appendString = (typeof(attributes.ellipsisAppend) !== 'undefined' && attributes.ellipsisAppend !== '') ? ellipsisSymbol + "<span class='angular-ellipsis-append'>" + attributes.ellipsisAppend + '</span>' : ellipsisSymbol;
 
-						attributes.isTruncated = false;
+						// Set the text the first time so we can check for overflow
 						if (isHtml) {
 							element.html(binding);
 						} else {
 							element.text(binding);
 						}
 
-						if (_isDefined(attributes.ellipsisFallbackFontSize) && isOverflowed(element)) {
-							element.css('font-size',attributes.ellipsisFallbackFontSize);	
+						if (_isDefined(scope.ellipsisFallbackFontSize) && isOverflowed(element, useParent)) {
+							element.css('font-size', scope.ellipsisFallbackFontSize);
 						}
 
-						// If text has overflow
-						if (isOverflowed(element, scope.useParent)) {
-							var bindArrayStartingLength = bindArray.length,
-								initialMaxHeight = scope.useParent ? getParentHeight(element) : element[0].clientHeight;
+						if (ellipsisMaxLines) {
+							var displayValue = element[0].style.display;
 
-							if (isHtml) {
-								element.html(binding + appendString);
-							} else {
-								element.text(binding).html(element.html() + appendString);
-							}
-							//Set data-overflow on element for targeting
+							// You only get line by line rectangles for an 'inline' element
+							element[0].style.display = 'inline';
+
+							var fullRectangle = element[0].getBoundingClientRect(),
+								lineRectangles = element[0].getClientRects(),
+								lineHeight = Math.ceil(fullRectangle.height / lineRectangles.length);
+
+							// Reset styling
+							element[0].style.display = displayValue;
+
+							// And now for the party trick
+							element[0].style.maxHeight = (lineHeight * scope.ellipsisMaxLines) + 'px';
+						}
+
+						// When the text has overflow
+						if (isOverflowed(element, useParent)) {
+							// Set data-overflow on element for targeting
 							element.attr('data-overflowed', 'true');
 
-							// Set complete text and remove one word at a time, until there is no overflow
-							for (; i < bindArrayStartingLength; i++) {
-								var current = bindArray.pop();
+							var initialMaxHeight = useParent ? getParentHeight(element) : element[0].clientHeight;
 
-								//if the last string still overflowed, then truncate the last string
-								if (bindArray.length === 0) {
-									bindArray[0] = current.substring(0, Math.min(current.length, 5));
+							var separatorLocations = [];
+							while ((match = ellipsisSeparatorReg.exec(binding)) != null) {
+								separatorLocations.push(match.index);
+							}
+
+							// We know the text overflows and there are no natural breakpoints so we build a new index
+							// With this index it will search for the best truncate location instead of for the best ellipsisSeparator location
+							if (separatorLocations.length === 0) {
+								var textLength = minimumTruncateLength = 5;
+								while (textLength <= binding.length) {
+									separatorLocations.push(textLength);
+									textLength = textLength * 2;
 								}
+								separatorLocations.push(binding.length);
+							}
 
-								if (isHtml) {
-									element.html(bindArray.join(ellipsisSeparator) + appendString);
-								} else {
-									element.text(bindArray.join(ellipsisSeparator)).html(element.html() + appendString);
-								}
+							var lowerBound = 0;
+							var upperBound = separatorLocations.length - 1;
+							var textCutOffIndex;
+							// Loop while upper bound and lower bound are not confined to the smallest range yet
+							while (true) {
+								// This is an implementation of a binary search as we try to find the overflow position as quickly as possible
+								textCutOffIndex = lowerBound + ((upperBound - lowerBound) >> 1);
+								var isOverflow = fastIsOverflowing(element, getTextUpToIndex(binding, separatorLocations, textCutOffIndex) + appendString, initialMaxHeight);
 
-								if ((scope.useParent ? element.parent()[0] : element[0]).scrollHeight < initialMaxHeight || isOverflowed(element, scope.useParent) === false) {
-									attributes.isTruncated = true;
+								if ((upperBound - lowerBound) === 1) {
 									break;
+								} else {
+									if (isOverflow) {
+										// The match was in the lower half, excluding the previous upper part
+										upperBound = textCutOffIndex;
+									} else {
+										// The match was in the upper half, excluding the previous lower part
+										lowerBound = textCutOffIndex;
+									}
 								}
+							}
+
+							// We finished the search now we set the new text through the correct binding api
+							attributes.isTruncated = true;
+							if (isHtml) {
+								element.html(getTextUpToIndex(binding, separatorLocations, textCutOffIndex) + appendString);
+							} else {
+								element.text(getTextUpToIndex(binding, separatorLocations, textCutOffIndex)).html(element.html() + appendString);
 							}
 
 							// If append string was passed and append click function included
@@ -162,15 +201,23 @@ angular.module('dibari.angular-ellipsis', [])
 								});
 							}
 
-							if(!isTrustedHTML && $sce.isEnabled())
-							{
+							if (!isTrustedHTML && $sce.isEnabled()) {
 								$sce.trustAsHtml(binding);
 							}
-						}
-						else{
+						} else {
 							element.attr('data-overflowed', 'false');
 						}
 					}
+				}
+
+				function getTextUpToIndex(binding, separatorLocations, index) {
+					return binding.substr(0, separatorLocations[index]);
+				}
+
+				function fastIsOverflowing(thisElement, text, initialMaxHeight) {
+					// Use innerHTML as it's more performant until we know the correct text length
+					thisElement[0].innerHTML = text;
+					return thisElement[0].scrollHeight > initialMaxHeight;
 				}
 
 				/**
@@ -219,9 +266,11 @@ angular.module('dibari.angular-ellipsis', [])
 				});
 
 				/**
-				*	Execute ellipsis truncate when element becomes visible
-				*/
-				scope.$watch(function() { return element[0].offsetWidth != 0 && element[0].offsetHeight != 0 }, function() {
+				 *    Execute ellipsis truncate when element becomes visible
+				 */
+				scope.$watch(function() {
+					return element[0].offsetWidth != 0 && element[0].offsetHeight != 0
+				}, function() {
 					asyncDigestDebounced.add(buildEllipsis);
 				});
 
