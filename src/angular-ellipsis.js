@@ -49,7 +49,7 @@ angular.module('dibari.angular-ellipsis', [])
 	};
 
 	var asyncDigestImmediate = new AsyncDigest(0);
-	var asyncDigestDebounced = new AsyncDigest(75);
+	var asyncDigestDebounced = new AsyncDigest(250);
 
 	return {
 		restrict: 'A',
