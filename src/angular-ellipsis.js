@@ -49,7 +49,7 @@ angular.module('dibari.angular-ellipsis', [])
 	};
 
 	var asyncDigestImmediate = new AsyncDigest(0);
-	var asyncDigestDebounced = new AsyncDigest(75);
+	var asyncDigestDebounced = new AsyncDigest(250);
 
 	return {
 		restrict: 'A',
@@ -153,7 +153,8 @@ angular.module('dibari.angular-ellipsis', [])
 
 							// If append string was passed and append click function included
 							if (ellipsisSymbol != appendString && typeof(scope.ellipsisAppendClick) !== 'undefined' && scope.ellipsisAppendClick !== '') {
-								element.find('span.angular-ellipsis-append').bind("click", function(e) {
+								var button = angular.element(element[0].querySelector('.angular-ellipsis-append'));
+								button.bind("click", function(e) {
 									scope.$apply(function() {
 										scope.ellipsisAppendClick.call(scope, {
 											event: e
@@ -221,7 +222,7 @@ angular.module('dibari.angular-ellipsis', [])
 				/**
 				*	Execute ellipsis truncate when element becomes visible
 				*/
-				scope.$watch(function() { return element[0].offsetWidth != 0 && element[0].offsetHeight != 0 }, function() {
+				scope.$watch(function() { return element[0].offsetWidth !== 0 && element[0].offsetHeight !== 0; }, function() {
 					asyncDigestDebounced.add(buildEllipsis);
 				});
 
