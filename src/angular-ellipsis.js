@@ -153,7 +153,8 @@ angular.module('dibari.angular-ellipsis', [])
 
 							// If append string was passed and append click function included
 							if (ellipsisSymbol != appendString && typeof(scope.ellipsisAppendClick) !== 'undefined' && scope.ellipsisAppendClick !== '') {
-								element.find('span.angular-ellipsis-append').bind("click", function(e) {
+								var button = angular.element(element[0].querySelector('.angular-ellipsis-append'));
+								button.bind("click", function(e) {
 									scope.$apply(function() {
 										scope.ellipsisAppendClick.call(scope, {
 											event: e
