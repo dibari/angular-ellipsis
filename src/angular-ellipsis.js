@@ -130,6 +130,9 @@ angular.module('dibari.angular-ellipsis', [])
 							//Set data-overflow on element for targeting
 							element.attr('data-overflowed', 'true');
 
+							//for bootstrap using
+							scope.$parent.$overflowFull = binding;
+
 							// Set complete text and remove one word at a time, until there is no overflow
 							for (; i < bindArrayStartingLength; i++) {
 								var current = bindArray.pop();
@@ -168,7 +171,9 @@ angular.module('dibari.angular-ellipsis', [])
 							}
 						}
 						else{
+							// remove set data in case text is no longer overflowing
 							element.attr('data-overflowed', 'false');
+							scope.$parent.$overflowFull = '';
 						}
 					}
 				}
