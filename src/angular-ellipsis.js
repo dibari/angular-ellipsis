@@ -116,60 +116,61 @@ angular.module('dibari.angular-ellipsis', [])
 						if (_isDefined(attributes.ellipsisFallbackFontSize) && isOverflowed(element)) {
 							element.css('font-size',attributes.ellipsisFallbackFontSize);	
 						}
-
-						// If text has overflow
-						if (isOverflowed(element, scope.useParent)) {
-							var bindArrayStartingLength = bindArray.length,
-								initialMaxHeight = scope.useParent ? getParentHeight(element) : element[0].clientHeight;
-
-							if (isHtml) {
-								element.html(binding + appendString);
-							} else {
-								element.text(binding).html(element.html() + appendString);
-							}
-							//Set data-overflow on element for targeting
-							element.attr('data-overflowed', 'true');
-
-							// Set complete text and remove one word at a time, until there is no overflow
-							for (; i < bindArrayStartingLength; i++) {
-								var current = bindArray.pop();
-
-								//if the last string still overflowed, then truncate the last string
-								if (bindArray.length === 0) {
-									bindArray[0] = current.substring(0, Math.min(current.length, 5));
-								}
+						$timeout(function() {
+							// If text has overflow
+							if (isOverflowed(element, scope.useParent)) {
+								var bindArrayStartingLength = bindArray.length,
+									initialMaxHeight = scope.useParent ? getParentHeight(element) : element[0].clientHeight;
 
 								if (isHtml) {
-									element.html(bindArray.join(ellipsisSeparator) + appendString);
+									element.html(binding + appendString);
 								} else {
-									element.text(bindArray.join(ellipsisSeparator)).html(element.html() + appendString);
+									element.text(binding).html(element.html() + appendString);
+								}
+								//Set data-overflow on element for targeting
+								element.attr('data-overflowed', 'true');
+
+								// Set complete text and remove one word at a time, until there is no overflow
+								for (; i < bindArrayStartingLength; i++) {
+									var current = bindArray.pop();
+
+									//if the last string still overflowed, then truncate the last string
+									if (bindArray.length === 0) {
+										bindArray[0] = current.substring(0, Math.min(current.length, 5));
+									}
+
+									if (isHtml) {
+										element.html(bindArray.join(ellipsisSeparator) + appendString);
+									} else {
+										element.text(bindArray.join(ellipsisSeparator)).html(element.html() + appendString);
+									}
+
+									if ((scope.useParent ? element.parent()[0] : element[0]).scrollHeight < initialMaxHeight || isOverflowed(element, scope.useParent) === false) {
+										attributes.isTruncated = true;
+										break;
+									}
 								}
 
-								if ((scope.useParent ? element.parent()[0] : element[0]).scrollHeight < initialMaxHeight || isOverflowed(element, scope.useParent) === false) {
-									attributes.isTruncated = true;
-									break;
-								}
-							}
-
-							// If append string was passed and append click function included
-							if (ellipsisSymbol != appendString && typeof(scope.ellipsisAppendClick) !== 'undefined' && scope.ellipsisAppendClick !== '') {
-								element.find('span.angular-ellipsis-append').bind("click", function(e) {
-									scope.$apply(function() {
-										scope.ellipsisAppendClick.call(scope, {
-											event: e
+								// If append string was passed and append click function included
+								if (ellipsisSymbol != appendString && typeof(scope.ellipsisAppendClick) !== 'undefined' && scope.ellipsisAppendClick !== '') {
+									element.find('span.angular-ellipsis-append').bind("click", function(e) {
+										scope.$apply(function() {
+											scope.ellipsisAppendClick.call(scope, {
+												event: e
+											});
 										});
 									});
-								});
-							}
+								}
 
-							if(!isTrustedHTML && $sce.isEnabled())
-							{
-								$sce.trustAsHtml(binding);
+								if(!isTrustedHTML && $sce.isEnabled())
+								{
+									$sce.trustAsHtml(binding);
+								}
 							}
-						}
-						else{
-							element.attr('data-overflowed', 'false');
-						}
+							else{
+								element.attr('data-overflowed', 'false');
+							}
+                    	});
 					}
 				}
 
