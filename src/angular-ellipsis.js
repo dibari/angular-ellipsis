@@ -116,9 +116,7 @@ angular.module('dibari.angular-ellipsis', [])
 						if (_isDefined(attributes.ellipsisFallbackFontSize) && isOverflowed(element)) {
 							element.css('font-size',attributes.ellipsisFallbackFontSize);	
 						}
-
-
-						$timeout(function(){
+						$timeout(function() {
 							// If text has overflow
 							if (isOverflowed(element, scope.useParent)) {
 								var bindArrayStartingLength = bindArray.length,
@@ -172,7 +170,7 @@ angular.module('dibari.angular-ellipsis', [])
 							else{
 								element.attr('data-overflowed', 'false');
 							}
-	                    });
+                    	});
 					}
 				}
 
