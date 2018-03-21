@@ -63,7 +63,8 @@ angular.module('dibari.angular-ellipsis', [])
 			ellipsisSeparator: '@',
 			useParent: "@",
 			ellipsisSeparatorReg: '=',
-			ellipsisFallbackFontSize:'@'
+			ellipsisFallbackFontSize: '@',
+            dataOverflowed: '=ellipsisDataOverflowed'
 		},
 		compile: function(elem, attr, linker) {
 
@@ -128,6 +129,7 @@ angular.module('dibari.angular-ellipsis', [])
 								element.text(binding).html(element.html() + appendString);
 							}
 							//Set data-overflow on element for targeting
+                            scope.dataOverflowed = true;
 							element.attr('data-overflowed', 'true');
 
 							// Set complete text and remove one word at a time, until there is no overflow
@@ -168,6 +170,7 @@ angular.module('dibari.angular-ellipsis', [])
 							}
 						}
 						else{
+                            scope.dataOverflowed = false;
 							element.attr('data-overflowed', 'false');
 						}
 					}
