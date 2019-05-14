@@ -183,7 +183,7 @@ angular.module('dibari.angular-ellipsis', [])
 				 */
 				function isOverflowed(thisElement, useParent) {
 					thisElement = useParent ? thisElement.parent() : thisElement;
-					return thisElement[0].scrollHeight > thisElement[0].clientHeight;
+					return thisElement[0].scrollHeight > thisElement[0].clientHeight + 1;
 				}
 
 				/**
